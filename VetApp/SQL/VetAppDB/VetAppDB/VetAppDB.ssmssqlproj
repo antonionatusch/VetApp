@@ -18,13 +18,28 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
+        <ConnectionNode Name="LAPTOP-GT569K6P:LAPTOP-GT569K6P\user">
+          <Created>2024-06-06T13:19:43.6272208-04:00</Created>
+          <Type>SQL</Type>
+          <Server>LAPTOP-GT569K6P</Server>
+          <UserName />
+          <Authentication>Windows Authentication</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <TrustServerCertificate>True</TrustServerCertificate>
+          <HostNameInServerCertificate />
+          <EncryptionOption>True</EncryptionOption>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName />
+        </ConnectionNode>
       </Items>
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
         <FileNode Name="SPHotel.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-GT569K6P:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LAPTOP-GT569K6P</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SPHotel.sql</FullPath>
         </FileNode>
