@@ -37,17 +37,11 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
-        <FileNode Name="SQLQuery1.sql">
+        <FileNode Name="SPHotel.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-GT569K6P:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>LAPTOP-GT569K6P</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>SQLQuery1.sql</FullPath>
-        </FileNode>
-        <FileNode Name="SQLQuery2.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-GT569K6P:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>LAPTOP-GT569K6P</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>SQLQuery2.sql</FullPath>
+          <FullPath>SPHotel.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
