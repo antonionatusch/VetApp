@@ -17,5 +17,7 @@ public partial class Servicio
 
     public string TipoServicio { get; set; } = null!;
 
+    public virtual ICollection<ConsumoHotel> ConsumoHotels { get; set; } = new List<ConsumoHotel>();
+
     public virtual ICollection<ConsumosVet> ConsumosVets { get; set; } = new List<ConsumosVet>();
 }
