@@ -19,5 +19,13 @@ public partial class Mascota
 
     public DateOnly? FechaNac { get; set; }
 
+    public virtual ICollection<AplicaVacuna> AplicaVacunas { get; set; } = new List<AplicaVacuna>();
+
     public virtual Cliente CodClienteNavigation { get; set; } = null!;
+
+    public virtual ICollection<Consulta> Consulta { get; set; } = new List<Consulta>();
+
+    public virtual ICollection<ConsumosVet> ConsumosVets { get; set; } = new List<ConsumosVet>();
+
+    public virtual ICollection<HistPeso> HistPesos { get; set; } = new List<HistPeso>();
 }
