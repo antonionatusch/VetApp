@@ -69,6 +69,54 @@ CREATE TABLE Servicios
 
 );
 
+CREATE TABLE Hospedajes
+(
+
+	idHospedaje		INT IDENTITY (1,1) not null,
+	fechaIngreso	fechaObligatoria DEFAULT GETDATE(),
+	fechaSalida		date DEFAULT GETDATE(),
+	observaciones	varchar(150) not null,
+	CONSTRAINT PK_idHospedaje PRIMARY KEY (idHospedaje)
+
+);
+
+
+CREATE TABLE Alimentos
+(
+
+	codAlimento		idFijo,
+	nombre			nombre,
+	descripcion		varchar(150) not null,
+	proveedor		nombre,
+	precioUnitario	money not null,
+	CONSTRAINT PK_Alim PRIMARY KEY (codAlimento)
+);
+
+CREATE TABLE Comodidades
+(
+
+	idComodidad		idFijo,
+	nombre			nombre,
+	descripcion		varchar(150) not null,
+	precioUnitario	money not null,
+	CONSTRAINT PK_Com PRIMARY KEY (idComodidad)
+
+);
+
+CREATE TABLE Medicamentos
+(
+
+	codMedicamento	idFijo,
+	laboratorio		nombre,
+	presentacion	char(30) not null,
+	pesoNeto		decimal(5,2) not null,
+	precioUnitario	money not null,
+	nombre			nombre
+
+	CONSTRAINT PK_Medic PRIMARY KEY (codMedicamento)
+
+
+);
 
 -- con foreign keys, no asociativas: mascotas, consultas, histpeso
 
@@ -112,7 +160,7 @@ CREATE TABLE HistPesos
 
 );
 
--- entidades asociativas: consumo vet, persona cliente, aplica vacuna
+-- entidades asociativas: consumo vet, persona cliente, aplica vacuna, consumo hotel
 
 CREATE TABLE ConsumosVet
 (
@@ -156,3 +204,30 @@ CREATE TABLE AplicaVacuna
 
 
 );
+
+CREATE TABLE ConsumoHotel
+(
+
+	idHospedaje		int not null,
+	idServicio		idFijo,
+	codMascota		idFijo,
+	codAlimento		char(20),
+	codMedicamento	char(20),
+	idComodidad		char(20),
+	NIT				varchar(20) NOT NULL,
+	observaciones	varchar(150) NOT NULL,
+	cantidadAlim	int NOT NULL DEFAULT 0,
+	cantidadMedic	int NOT NULL DEFAULT 0,
+	cantidadCom		int NOT NULL DEFAULT 0,
+	CONSTRAINT PK_ConsumoHotel PRIMARY KEY (idHospedaje, idServicio, codMascota),
+	CONSTRAINT FK_HospedajeCH FOREIGN KEY (idHospedaje) REFERENCES Hospedajes,
+	CONSTRAINT FK_ServiciosCH FOREIGN KEY (idServicio) REFERENCES Servicios,
+	CONSTRAINT FK_MascCH FOREIGN KEY (codMascota) REFERENCES Mascotas,
+	CONSTRAINT FK_AlimCH FOREIGN KEY (codAlimento) REFERENCES Alimentos,
+	CONSTRAINT FK_MedicCH FOREIGN KEY (codMedicamento) REFERENCES Medicamentos,
+	CONSTRAINT FK_ComodCH FOREIGN KEY (idComodidad) REFERENCES Comodidades,
+	
+
+
+);
+
