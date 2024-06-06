@@ -53,3 +53,17 @@ CREATE TABLE PersonaCliente
 	CONSTRAINT FK_PersonasPC FOREIGN KEY (ci) REFERENCES Personas(ci)
 );
 
+CREATE TABLE Mascotas
+(
+
+	codMascota			idFijo,
+	codCliente			idFijo,
+	nombre				nombre,
+	especie				varchar(30) not null,
+	raza				varchar(30) not null,
+	color				varchar(20) not null,
+	fechaNac			date
+	CONSTRAINT PK_Mascotas PRIMARY KEY (codMascota),
+	CONSTRAINT FK_CliMascotas FOREIGN KEY (codCliente) REFERENCES Clientes
+
+);

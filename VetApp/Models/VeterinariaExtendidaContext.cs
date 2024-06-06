@@ -17,6 +17,8 @@ public partial class VeterinariaExtendidaContext : DbContext
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
+    public virtual DbSet<Mascota> Mascotas { get; set; }
+
     public virtual DbSet<Persona> Personas { get; set; }
 
     public virtual DbSet<PersonaCliente> PersonaClientes { get; set; }
@@ -60,6 +62,44 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("telefono");
+        });
+
+        modelBuilder.Entity<Mascota>(entity =>
+        {
+            entity.HasKey(e => e.CodMascota);
+
+            entity.Property(e => e.CodMascota)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMascota");
+            entity.Property(e => e.CodCliente)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codCliente");
+            entity.Property(e => e.Color)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("color");
+            entity.Property(e => e.Especie)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("especie");
+            entity.Property(e => e.FechaNac).HasColumnName("fechaNac");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Raza)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("raza");
+
+            entity.HasOne(d => d.CodClienteNavigation).WithMany(p => p.Mascota)
+                .HasForeignKey(d => d.CodCliente)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CliMascotas");
         });
 
         modelBuilder.Entity<Persona>(entity =>
