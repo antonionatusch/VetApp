@@ -19,5 +19,7 @@ public partial class Cliente
 
     public string Correo { get; set; } = null!;
 
+    public virtual ICollection<Mascota> Mascota { get; set; } = new List<Mascota>();
+
     public virtual ICollection<PersonaCliente> PersonaClientes { get; set; } = new List<PersonaCliente>();
 }
