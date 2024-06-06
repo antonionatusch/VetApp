@@ -18,7 +18,7 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
-        <ConnectionNode Name="LAPTOP-GT569K6P:LAPTOP-GT569K6P\user">
+        <ConnectionNode Name="LAPTOP-GT569K6P:ANTONIO\Antonio">
           <Created>2024-06-06T12:56:56.7632546-04:00</Created>
           <Type>SQL</Type>
           <Server>LAPTOP-GT569K6P</Server>
@@ -42,6 +42,18 @@
           <AssociatedConnSrvName>LAPTOP-GT569K6P</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>SPHotel.sql</FullPath>
+        </FileNode>
+        <FileNode Name="Veterinaria.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Veterinaria.sql</FullPath>
+        </FileNode>
+        <FileNode Name="VetSP.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>VetSP.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
