@@ -101,6 +101,17 @@ CREATE TABLE Consultas
 
 );
 
+CREATE TABLE HistPesos
+(
+
+	codMascota		idFijo,
+	fechaPesaje		fechaObligatoria,
+	peso			decimal(5,2) not null,
+	CONSTRAINT PK_HistPeso PRIMARY KEY (codMascota, fechaPesaje),
+	CONSTRAINT FK_MasHistPesos FOREIGN KEY (codMascota) REFERENCES Mascotas
+
+);
+
 -- entidades asociativas: consumo vet, persona cliente, aplica vacuna
 
 CREATE TABLE ConsumosVet

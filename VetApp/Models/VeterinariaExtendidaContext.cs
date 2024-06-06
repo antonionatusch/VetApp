@@ -23,6 +23,8 @@ public partial class VeterinariaExtendidaContext : DbContext
 
     public virtual DbSet<ConsumosVet> ConsumosVets { get; set; }
 
+    public virtual DbSet<HistPeso> HistPesos { get; set; }
+
     public virtual DbSet<Mascota> Mascotas { get; set; }
 
     public virtual DbSet<Persona> Personas { get; set; }
@@ -189,6 +191,26 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasForeignKey(d => d.IdServicio)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SerCV");
+        });
+
+        modelBuilder.Entity<HistPeso>(entity =>
+        {
+            entity.HasKey(e => new { e.CodMascota, e.FechaPesaje }).HasName("PK_HistPeso");
+
+            entity.Property(e => e.CodMascota)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMascota");
+            entity.Property(e => e.FechaPesaje).HasColumnName("fechaPesaje");
+            entity.Property(e => e.Peso)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("peso");
+
+            entity.HasOne(d => d.CodMascotaNavigation).WithMany(p => p.HistPesos)
+                .HasForeignKey(d => d.CodMascota)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MasHistPesos");
         });
 
         modelBuilder.Entity<Mascota>(entity =>
