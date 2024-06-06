@@ -15,17 +15,27 @@ public partial class VeterinariaExtendidaContext : DbContext
     {
     }
 
+    public virtual DbSet<Alimento> Alimentos { get; set; }
+
     public virtual DbSet<AplicaVacuna> AplicaVacunas { get; set; }
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
+    public virtual DbSet<Comodidade> Comodidades { get; set; }
+
     public virtual DbSet<Consulta> Consultas { get; set; }
+
+    public virtual DbSet<ConsumoHotel> ConsumoHotels { get; set; }
 
     public virtual DbSet<ConsumosVet> ConsumosVets { get; set; }
 
     public virtual DbSet<HistPeso> HistPesos { get; set; }
 
+    public virtual DbSet<Hospedaje> Hospedajes { get; set; }
+
     public virtual DbSet<Mascota> Mascotas { get; set; }
+
+    public virtual DbSet<Medicamento> Medicamentos { get; set; }
 
     public virtual DbSet<Persona> Personas { get; set; }
 
@@ -41,6 +51,32 @@ public partial class VeterinariaExtendidaContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Alimento>(entity =>
+        {
+            entity.HasKey(e => e.CodAlimento).HasName("PK_Alim");
+
+            entity.Property(e => e.CodAlimento)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codAlimento");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("nombre");
+            entity.Property(e => e.PrecioUnitario)
+                .HasColumnType("money")
+                .HasColumnName("precioUnitario");
+            entity.Property(e => e.Proveedor)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("proveedor");
+        });
+
         modelBuilder.Entity<AplicaVacuna>(entity =>
         {
             entity.HasKey(e => new { e.CodMascota, e.CodVacuna, e.FechaPrevista }).HasName("PK_AplicaVac");
@@ -109,6 +145,28 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnName("telefono");
         });
 
+        modelBuilder.Entity<Comodidade>(entity =>
+        {
+            entity.HasKey(e => e.IdComodidad).HasName("PK_Com");
+
+            entity.Property(e => e.IdComodidad)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("idComodidad");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("descripcion");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("nombre");
+            entity.Property(e => e.PrecioUnitario)
+                .HasColumnType("money")
+                .HasColumnName("precioUnitario");
+        });
+
         modelBuilder.Entity<Consulta>(entity =>
         {
             entity.HasKey(e => new { e.CodMascota, e.FechaConsulta });
@@ -140,6 +198,78 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasForeignKey(d => d.CodMascota)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MascConsultas");
+        });
+
+        modelBuilder.Entity<ConsumoHotel>(entity =>
+        {
+            entity.HasKey(e => new { e.IdHospedaje, e.IdServicio, e.CodMascota });
+
+            entity.ToTable("ConsumoHotel");
+
+            entity.Property(e => e.IdHospedaje).HasColumnName("idHospedaje");
+            entity.Property(e => e.IdServicio)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("idServicio");
+            entity.Property(e => e.CodMascota)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMascota");
+            entity.Property(e => e.CantidadAlim).HasColumnName("cantidadAlim");
+            entity.Property(e => e.CantidadCom).HasColumnName("cantidadCom");
+            entity.Property(e => e.CantidadMedic).HasColumnName("cantidadMedic");
+            entity.Property(e => e.CodAlimento)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codAlimento");
+            entity.Property(e => e.CodMedicamento)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMedicamento");
+            entity.Property(e => e.IdComodidad)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("idComodidad");
+            entity.Property(e => e.Nit)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("NIT");
+            entity.Property(e => e.Observaciones)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("observaciones");
+
+            entity.HasOne(d => d.CodAlimentoNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.CodAlimento)
+                .HasConstraintName("FK_AlimCH");
+
+            entity.HasOne(d => d.CodMascotaNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.CodMascota)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MascCH");
+
+            entity.HasOne(d => d.CodMedicamentoNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.CodMedicamento)
+                .HasConstraintName("FK_MedicCH");
+
+            entity.HasOne(d => d.IdComodidadNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.IdComodidad)
+                .HasConstraintName("FK_ComodCH");
+
+            entity.HasOne(d => d.IdHospedajeNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.IdHospedaje)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HospedajeCH");
+
+            entity.HasOne(d => d.IdServicioNavigation).WithMany(p => p.ConsumoHotels)
+                .HasForeignKey(d => d.IdServicio)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ServiciosCH");
         });
 
         modelBuilder.Entity<ConsumosVet>(entity =>
@@ -213,6 +343,23 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasConstraintName("FK_MasHistPesos");
         });
 
+        modelBuilder.Entity<Hospedaje>(entity =>
+        {
+            entity.HasKey(e => e.IdHospedaje).HasName("PK_idHospedaje");
+
+            entity.Property(e => e.IdHospedaje).HasColumnName("idHospedaje");
+            entity.Property(e => e.FechaIngreso)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("fechaIngreso");
+            entity.Property(e => e.FechaSalida)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("fechaSalida");
+            entity.Property(e => e.Observaciones)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("observaciones");
+        });
+
         modelBuilder.Entity<Mascota>(entity =>
         {
             entity.HasKey(e => e.CodMascota);
@@ -249,6 +396,36 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasForeignKey(d => d.CodCliente)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CliMascotas");
+        });
+
+        modelBuilder.Entity<Medicamento>(entity =>
+        {
+            entity.HasKey(e => e.CodMedicamento).HasName("PK_Medic");
+
+            entity.Property(e => e.CodMedicamento)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMedicamento");
+            entity.Property(e => e.Laboratorio)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("laboratorio");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
+                .IsUnicode(false)
+                .HasColumnName("nombre");
+            entity.Property(e => e.PesoNeto)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("pesoNeto");
+            entity.Property(e => e.PrecioUnitario)
+                .HasColumnType("money")
+                .HasColumnName("precioUnitario");
+            entity.Property(e => e.Presentacion)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("presentacion");
         });
 
         modelBuilder.Entity<Persona>(entity =>

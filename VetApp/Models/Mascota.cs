@@ -25,6 +25,8 @@ public partial class Mascota
 
     public virtual ICollection<Consulta> Consulta { get; set; } = new List<Consulta>();
 
+    public virtual ICollection<ConsumoHotel> ConsumoHotels { get; set; } = new List<ConsumoHotel>();
+
     public virtual ICollection<ConsumosVet> ConsumosVets { get; set; } = new List<ConsumosVet>();
 
     public virtual ICollection<HistPeso> HistPesos { get; set; } = new List<HistPeso>();
