@@ -54,6 +54,51 @@ namespace VetApp.Controllers
             return View(personaCliente);
         }
 
+        // GET: PersonaClientes/Edit
+        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion)
+        {
+            if (codCliente == null || ci == null)
+            {
+                return NotFound();
+            }
+
+            var personaCliente = await _context.PersonaClientes.FindAsync(codCliente, ci, fechaAsociacion);
+            if (personaCliente == null)
+            {
+                return NotFound();
+            }
+            ViewData["Ci"] = new SelectList(_context.Personas, "Ci", "Ci", personaCliente.Ci);
+            ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", personaCliente.CodCliente);
+            return View(personaCliente);
+        }
+
+        // POST: PersonaClientes/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion, [Bind("CodCliente,Ci,FechaAsociacion")] PersonaCliente personaCliente)
+        {
+            if (codCliente != personaCliente.CodCliente || ci != personaCliente.Ci || fechaAsociacion != personaCliente.FechaAsociacion)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.UpdatePersonaCliente(personaCliente.CodCliente, personaCliente.Ci, personaCliente.FechaAsociacion);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error: {ex.Message}");
+                }
+            }
+            ViewData["Ci"] = new SelectList(_context.Personas, "Ci", "Ci", personaCliente.Ci);
+            ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", personaCliente.CodCliente);
+            return View(personaCliente);
+        }
+
         // GET: PersonaClientes/Delete
         public async Task<IActionResult> Delete(string codCliente, string ci, DateOnly fechaAsociacion)
         {
