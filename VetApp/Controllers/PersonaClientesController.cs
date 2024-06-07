@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -25,26 +24,6 @@ namespace VetApp.Controllers
             return View(await veterinariaExtendidaContext.ToListAsync());
         }
 
-        // GET: PersonaClientes/Details/5
-        public async Task<IActionResult> Details(string codCliente, string ci, DateOnly fechaAsociacion)
-        {
-            if (codCliente == null || ci == null)
-            {
-                return NotFound();
-            }
-
-            var personaCliente = await _context.PersonaClientes
-                .Include(p => p.CiNavigation)
-                .Include(p => p.CodClienteNavigation)
-                .FirstOrDefaultAsync(m => m.CodCliente == codCliente && m.Ci == ci && m.FechaAsociacion == fechaAsociacion);
-            if (personaCliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(personaCliente);
-        }
-
         // GET: PersonaClientes/Create
         public IActionResult Create()
         {
@@ -60,62 +39,15 @@ namespace VetApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(personaCliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Ci"] = new SelectList(_context.Personas, "Ci", "Ci", personaCliente.Ci);
-            ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", personaCliente.CodCliente);
-            return View(personaCliente);
-        }
-
-        // GET: PersonaClientes/Edit
-        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion)
-        {
-            if (codCliente == null || ci == null)
-            {
-                return NotFound();
-            }
-
-            var personaCliente = await _context.PersonaClientes.FindAsync(codCliente, ci, fechaAsociacion);
-            if (personaCliente == null)
-            {
-                return NotFound();
-            }
-            ViewData["Ci"] = new SelectList(_context.Personas, "Ci", "Ci", personaCliente.Ci);
-            ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", personaCliente.CodCliente);
-            return View(personaCliente);
-        }
-
-        // POST: PersonaClientes/Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion, [Bind("CodCliente,Ci,FechaAsociacion")] PersonaCliente personaCliente)
-        {
-            if (codCliente != personaCliente.CodCliente || ci != personaCliente.Ci || fechaAsociacion != personaCliente.FechaAsociacion)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
                 try
                 {
-                    _context.Update(personaCliente);
-                    await _context.SaveChangesAsync();
+                    _context.InsertPersonaCliente(personaCliente.CodCliente, personaCliente.Ci, personaCliente.FechaAsociacion);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!PersonaClienteExists(personaCliente.CodCliente, personaCliente.Ci, personaCliente.FechaAsociacion))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", $"Error: {ex.Message}");
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["Ci"] = new SelectList(_context.Personas, "Ci", "Ci", personaCliente.Ci);
             ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", personaCliente.CodCliente);
@@ -145,16 +77,18 @@ namespace VetApp.Controllers
         // POST: PersonaClientes/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string codCliente, string ci, DateOnly fechaAsociacion)
+        public async Task<IActionResult> DeleteConfirmed(string codCliente, string ci)
         {
-            var personaCliente = await _context.PersonaClientes.FindAsync(codCliente, ci, fechaAsociacion);
-            if (personaCliente != null)
+            try
             {
-                _context.PersonaClientes.Remove(personaCliente);
-                await _context.SaveChangesAsync();
+                _context.DeletePersonaCliente(codCliente, ci);
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error: {ex.Message}");
+                return View();
+            }
         }
 
         private bool PersonaClienteExists(string codCliente, string ci, DateOnly fechaAsociacion)

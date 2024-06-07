@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace VetApp.Models;
@@ -545,4 +547,30 @@ public partial class VeterinariaExtendidaContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public void InsertPersonaCliente(string codCliente, string ci, DateOnly fechaAsociacion)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+        var fechaAsociacionParam = new SqlParameter("@FechaAsociacion", SqlDbType.Date) { Value = fechaAsociacion };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Insert @CodCliente, @Ci, @FechaAsociacion", codClienteParam, ciParam, fechaAsociacionParam);
+    }
+
+    public void UpdatePersonaCliente(string codCliente, string ci, DateOnly fechaAsociacion)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+        var fechaAsociacionParam = new SqlParameter("@FechaAsociacion", SqlDbType.Date) { Value = fechaAsociacion };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Update @CodCliente, @Ci, @FechaAsociacion", codClienteParam, ciParam, fechaAsociacionParam);
+    }
+
+    public void DeletePersonaCliente(string codCliente, string ci)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Delete @CodCliente, @Ci", codClienteParam, ciParam);
+    }
 }
