@@ -1,7 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using VetApp.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<VeterinariaExtendidaContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Conexion")));
 
 var app = builder.Build();
 
