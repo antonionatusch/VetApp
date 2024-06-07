@@ -26,9 +26,9 @@ namespace VetApp.Controllers
         }
 
         // GET: PersonaClientes/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string codCliente, string ci, DateOnly fechaAsociacion)
         {
-            if (id == null)
+            if (codCliente == null || ci == null)
             {
                 return NotFound();
             }
@@ -36,7 +36,7 @@ namespace VetApp.Controllers
             var personaCliente = await _context.PersonaClientes
                 .Include(p => p.CiNavigation)
                 .Include(p => p.CodClienteNavigation)
-                .FirstOrDefaultAsync(m => m.CodCliente == id);
+                .FirstOrDefaultAsync(m => m.CodCliente == codCliente && m.Ci == ci && m.FechaAsociacion == fechaAsociacion);
             if (personaCliente == null)
             {
                 return NotFound();
@@ -54,8 +54,6 @@ namespace VetApp.Controllers
         }
 
         // POST: PersonaClientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CodCliente,Ci,FechaAsociacion")] PersonaCliente personaCliente)
@@ -71,15 +69,15 @@ namespace VetApp.Controllers
             return View(personaCliente);
         }
 
-        // GET: PersonaClientes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        // GET: PersonaClientes/Edit
+        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion)
         {
-            if (id == null)
+            if (codCliente == null || ci == null)
             {
                 return NotFound();
             }
 
-            var personaCliente = await _context.PersonaClientes.FindAsync(id);
+            var personaCliente = await _context.PersonaClientes.FindAsync(codCliente, ci, fechaAsociacion);
             if (personaCliente == null)
             {
                 return NotFound();
@@ -89,14 +87,12 @@ namespace VetApp.Controllers
             return View(personaCliente);
         }
 
-        // POST: PersonaClientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: PersonaClientes/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CodCliente,Ci,FechaAsociacion")] PersonaCliente personaCliente)
+        public async Task<IActionResult> Edit(string codCliente, string ci, DateOnly fechaAsociacion, [Bind("CodCliente,Ci,FechaAsociacion")] PersonaCliente personaCliente)
         {
-            if (id != personaCliente.CodCliente)
+            if (codCliente != personaCliente.CodCliente || ci != personaCliente.Ci || fechaAsociacion != personaCliente.FechaAsociacion)
             {
                 return NotFound();
             }
@@ -110,7 +106,7 @@ namespace VetApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonaClienteExists(personaCliente.CodCliente))
+                    if (!PersonaClienteExists(personaCliente.CodCliente, personaCliente.Ci, personaCliente.FechaAsociacion))
                     {
                         return NotFound();
                     }
@@ -126,10 +122,10 @@ namespace VetApp.Controllers
             return View(personaCliente);
         }
 
-        // GET: PersonaClientes/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        // GET: PersonaClientes/Delete
+        public async Task<IActionResult> Delete(string codCliente, string ci, DateOnly fechaAsociacion)
         {
-            if (id == null)
+            if (codCliente == null || ci == null)
             {
                 return NotFound();
             }
@@ -137,7 +133,7 @@ namespace VetApp.Controllers
             var personaCliente = await _context.PersonaClientes
                 .Include(p => p.CiNavigation)
                 .Include(p => p.CodClienteNavigation)
-                .FirstOrDefaultAsync(m => m.CodCliente == id);
+                .FirstOrDefaultAsync(m => m.CodCliente == codCliente && m.Ci == ci && m.FechaAsociacion == fechaAsociacion);
             if (personaCliente == null)
             {
                 return NotFound();
@@ -146,24 +142,24 @@ namespace VetApp.Controllers
             return View(personaCliente);
         }
 
-        // POST: PersonaClientes/Delete/5
+        // POST: PersonaClientes/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string codCliente, string ci, DateOnly fechaAsociacion)
         {
-            var personaCliente = await _context.PersonaClientes.FindAsync(id);
+            var personaCliente = await _context.PersonaClientes.FindAsync(codCliente, ci, fechaAsociacion);
             if (personaCliente != null)
             {
                 _context.PersonaClientes.Remove(personaCliente);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PersonaClienteExists(string id)
+        private bool PersonaClienteExists(string codCliente, string ci, DateOnly fechaAsociacion)
         {
-            return _context.PersonaClientes.Any(e => e.CodCliente == id);
+            return _context.PersonaClientes.Any(e => e.CodCliente == codCliente && e.Ci == ci && e.FechaAsociacion == fechaAsociacion);
         }
     }
 }

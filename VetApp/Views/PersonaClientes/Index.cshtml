@@ -13,29 +13,36 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CiNavigation)
+                @Html.DisplayNameFor(model => model.CiNavigation.Ci)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CodClienteNavigation)
+                @Html.DisplayNameFor(model => model.CodClienteNavigation.CodCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaAsociacion)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CiNavigation.Ci)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CodClienteNavigation.CodCliente)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CiNavigation.Ci)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodClienteNavigation.CodCliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaAsociacion)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion }) |
+                    @Html.ActionLink("Details", "Details", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion }) |
+                    @Html.ActionLink("Delete", "Delete", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
