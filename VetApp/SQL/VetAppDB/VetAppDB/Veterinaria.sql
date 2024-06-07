@@ -166,13 +166,13 @@ CREATE TABLE ConsumosVet
 (
 
 	codMascota		idFijo,
-	codVacuna		idFijo,
+	codVacuna		char(20),
 	idServicio		idFijo,
 	idConsumoVet	INT IDENTITY(1,1) not null,
 	observaciones	varchar(200) not null,
 	cantVacunas		int not null DEFAULT 0,
 	nit				idFijo,
-	CONSTRAINT PK_CV PRIMARY KEY (codMascota, codVacuna, idServicio, idConsumoVet),
+	CONSTRAINT PK_CV PRIMARY KEY (codMascota, idServicio, idConsumoVet),
 	CONSTRAINT FK_MasCV FOREIGN KEY (codMascota) REFERENCES Mascotas,
 	CONSTRAINT FK_VacCV FOREIGN KEY (codVacuna) REFERENCES Vacunas,
 	CONSTRAINT FK_SerCV FOREIGN KEY (idServicio) REFERENCES Servicios

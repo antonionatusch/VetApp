@@ -7,7 +7,7 @@ public partial class ConsumosVet
 {
     public string CodMascota { get; set; } = null!;
 
-    public string CodVacuna { get; set; } = null!;
+    public string? CodVacuna { get; set; }
 
     public string IdServicio { get; set; } = null!;
 
@@ -21,7 +21,7 @@ public partial class ConsumosVet
 
     public virtual Mascota CodMascotaNavigation { get; set; } = null!;
 
-    public virtual Vacuna CodVacunaNavigation { get; set; } = null!;
+    public virtual Vacuna? CodVacunaNavigation { get; set; }
 
     public virtual Servicio IdServicioNavigation { get; set; } = null!;
 }
