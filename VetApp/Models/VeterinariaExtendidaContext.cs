@@ -274,7 +274,7 @@ public partial class VeterinariaExtendidaContext : DbContext
 
         modelBuilder.Entity<ConsumosVet>(entity =>
         {
-            entity.HasKey(e => new { e.CodMascota, e.CodVacuna, e.IdServicio, e.IdConsumoVet }).HasName("PK_CV");
+            entity.HasKey(e => new { e.CodMascota, e.IdServicio, e.IdConsumoVet }).HasName("PK_CV");
 
             entity.ToTable("ConsumosVet");
 
@@ -283,11 +283,6 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("codMascota");
-            entity.Property(e => e.CodVacuna)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codVacuna");
             entity.Property(e => e.IdServicio)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -297,6 +292,11 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .ValueGeneratedOnAdd()
                 .HasColumnName("idConsumoVet");
             entity.Property(e => e.CantVacunas).HasColumnName("cantVacunas");
+            entity.Property(e => e.CodVacuna)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codVacuna");
             entity.Property(e => e.Nit)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -314,7 +314,6 @@ public partial class VeterinariaExtendidaContext : DbContext
 
             entity.HasOne(d => d.CodVacunaNavigation).WithMany(p => p.ConsumosVets)
                 .HasForeignKey(d => d.CodVacuna)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VacCV");
 
             entity.HasOne(d => d.IdServicioNavigation).WithMany(p => p.ConsumosVets)
