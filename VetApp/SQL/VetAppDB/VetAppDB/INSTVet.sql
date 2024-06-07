@@ -101,3 +101,19 @@ VALUES
 (3, 'S003', 'M003', 'A003', 'M003', 'C003', '3456789012', 'Ninguna', 1, 1, 1),
 (4, 'S004', 'M004', 'A004', 'M004', 'C004', '4567890123', 'Ninguna', 1, 1, 1),
 (5, 'S005', 'M005', 'A005', 'M005', 'C005', '5678901234', 'Ninguna', 1, 1, 1);
+
+DELETE FROM Personas;
+DELETE FROM Clientes;
+DELETE FROM Vacunas;
+DELETE FROM Servicios;
+DELETE FROM Hospedajes;
+DELETE FROM Alimentos;
+DELETE FROM Comodidades;
+DELETE FROM Medicamentos;
+DELETE FROM Mascotas;
+DELETE FROM Consultas;
+DELETE FROM HistPesos;
+DELETE FROM ConsumosVet;
+DELETE FROM PersonaCliente;
+DELETE FROM AplicaVacuna;
+DELETE FROM ConsumoHotel;
