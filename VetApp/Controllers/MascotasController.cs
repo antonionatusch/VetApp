@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VetApp.Models;
 
@@ -21,8 +21,8 @@ namespace VetApp.Controllers
         // GET: Mascotas
         public async Task<IActionResult> Index()
         {
-            var veterinariaExtendidaContext = _context.Mascotas.Include(m => m.CodClienteNavigation);
-            return View(await veterinariaExtendidaContext.ToListAsync());
+            var mascotas = _context.Mascotas.Include(m => m.CodClienteNavigation);
+            return View(await mascotas.ToListAsync());
         }
 
         // GET: Mascotas/Details/5
@@ -52,17 +52,31 @@ namespace VetApp.Controllers
         }
 
         // POST: Mascotas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CodMascota,CodCliente,Nombre,Especie,Raza,Color,FechaNac")] Mascota mascota)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(mascota);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var fechaNac = mascota.FechaNac.HasValue ? mascota.FechaNac.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null;
+                    _context.InsertMascota(mascota.CodMascota, mascota.CodCliente, mascota.Nombre, mascota.Especie, mascota.Raza, mascota.Color, fechaNac);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    var sqlException = ex.GetBaseException() as SqlException;
+                    if (sqlException != null && sqlException.Number == 50000)
+                    {
+                        ModelState.AddModelError(string.Empty, sqlException.Message);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
+                    }
+                }
             }
             ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", mascota.CodCliente);
             return View(mascota);
@@ -86,8 +100,6 @@ namespace VetApp.Controllers
         }
 
         // POST: Mascotas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("CodMascota,CodCliente,Nombre,Especie,Raza,Color,FechaNac")] Mascota mascota)
@@ -101,21 +113,23 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    _context.Update(mascota);
+                    var fechaNac = mascota.FechaNac.HasValue ? mascota.FechaNac.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null;
+                    _context.UpdateMascota(mascota.CodMascota, mascota.CodCliente, mascota.Nombre, mascota.Especie, mascota.Raza, mascota.Color, fechaNac);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException ex)
                 {
-                    if (!MascotaExists(mascota.CodMascota))
+                    var sqlException = ex.GetBaseException() as SqlException;
+                    if (sqlException != null && sqlException.Number == 50000)
                     {
-                        return NotFound();
+                        ModelState.AddModelError(string.Empty, sqlException.Message);
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["CodCliente"] = new SelectList(_context.Clientes, "CodCliente", "CodCliente", mascota.CodCliente);
             return View(mascota);
@@ -145,14 +159,17 @@ namespace VetApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var mascota = await _context.Mascotas.FindAsync(id);
-            if (mascota != null)
+            try
             {
-                _context.Mascotas.Remove(mascota);
+                _context.DeleteMascota(id);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return View();
+            }
         }
 
         private bool MascotaExists(string id)

@@ -686,4 +686,42 @@ public partial class VeterinariaExtendidaContext : DbContext
         Database.ExecuteSqlRaw("EXEC DeleteVacuna @CodVacuna", codVacunaParam);
     }
 
+    public void InsertMascota(string codMascota, string codCliente, string nombre, string especie, string raza, string color, DateTime? fechaNac)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota },
+            new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
+            new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
+            new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
+            new SqlParameter("@FechaNac", SqlDbType.DateTime) { Value = (object)fechaNac ?? DBNull.Value }
+        };
+
+        Database.ExecuteSqlRaw("EXEC InsertMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
+    }
+
+    public void UpdateMascota(string codMascota, string codCliente, string nombre, string especie, string raza, string color, DateTime? fechaNac)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota },
+            new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
+            new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
+            new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
+            new SqlParameter("@FechaNac", SqlDbType.DateTime) { Value = (object)fechaNac ?? DBNull.Value }
+        };
+
+        Database.ExecuteSqlRaw("EXEC UpdateMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
+    }
+
+    public void DeleteMascota(string codMascota)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+
+        Database.ExecuteSqlRaw("EXEC DeleteMascota @CodMascota", codMascotaParam);
+    }
 }
