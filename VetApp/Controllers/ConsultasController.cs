@@ -25,16 +25,21 @@ namespace VetApp.Controllers
         }
 
         // GET: Consultas/Details
-        public async Task<IActionResult> Details(string codMascota, DateOnly fechaConsulta)
+        public async Task<IActionResult> Details(string codMascota, string fechaConsulta)
         {
             if (codMascota == null || fechaConsulta == null)
             {
                 return NotFound();
             }
 
+            if (!DateOnly.TryParse(fechaConsulta, out var parsedFechaConsulta))
+            {
+                return NotFound();
+            }
+
             var consulta = await _context.Consultas
                 .Include(c => c.CodMascotaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaConsulta == fechaConsulta);
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaConsulta == parsedFechaConsulta);
             if (consulta == null)
             {
                 return NotFound();
@@ -57,8 +62,7 @@ namespace VetApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(consulta);
-                await _context.SaveChangesAsync();
+                await _context.InsertarConsulta(consulta.CodMascota, consulta.FechaConsulta, consulta.Motivo, consulta.Diagnostico, consulta.Tratamiento, consulta.Medicacion);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "CodMascota", consulta.CodMascota);
@@ -66,14 +70,19 @@ namespace VetApp.Controllers
         }
 
         // GET: Consultas/Edit
-        public async Task<IActionResult> Edit(string codMascota, DateOnly fechaConsulta)
+        public async Task<IActionResult> Edit(string codMascota, string fechaConsulta)
         {
             if (codMascota == null || fechaConsulta == null)
             {
                 return NotFound();
             }
 
-            var consulta = await _context.Consultas.FindAsync(codMascota, fechaConsulta);
+            if (!DateOnly.TryParse(fechaConsulta, out var parsedFechaConsulta))
+            {
+                return NotFound();
+            }
+
+            var consulta = await _context.Consultas.FindAsync(codMascota, parsedFechaConsulta);
             if (consulta == null)
             {
                 return NotFound();
@@ -85,9 +94,14 @@ namespace VetApp.Controllers
         // POST: Consultas/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string codMascota, DateOnly fechaConsulta, [Bind("CodMascota,FechaConsulta,Motivo,Diagnostico,Tratamiento,Medicacion")] Consulta consulta)
+        public async Task<IActionResult> Edit(string codMascota, string fechaConsulta, [Bind("CodMascota,FechaConsulta,Motivo,Diagnostico,Tratamiento,Medicacion")] Consulta consulta)
         {
-            if (codMascota != consulta.CodMascota || fechaConsulta != consulta.FechaConsulta)
+            if (!DateOnly.TryParse(fechaConsulta, out var parsedFechaConsulta))
+            {
+                return NotFound();
+            }
+
+            if (codMascota != consulta.CodMascota || parsedFechaConsulta != consulta.FechaConsulta)
             {
                 return NotFound();
             }
@@ -96,8 +110,7 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    _context.Update(consulta);
-                    await _context.SaveChangesAsync();
+                    await _context.ActualizarConsulta(consulta.CodMascota, consulta.FechaConsulta, consulta.Motivo, consulta.Diagnostico, consulta.Tratamiento, consulta.Medicacion);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,16 +130,21 @@ namespace VetApp.Controllers
         }
 
         // GET: Consultas/Delete
-        public async Task<IActionResult> Delete(string codMascota, DateOnly fechaConsulta)
+        public async Task<IActionResult> Delete(string codMascota, string fechaConsulta)
         {
             if (codMascota == null || fechaConsulta == null)
             {
                 return NotFound();
             }
 
+            if (!DateOnly.TryParse(fechaConsulta, out var parsedFechaConsulta))
+            {
+                return NotFound();
+            }
+
             var consulta = await _context.Consultas
                 .Include(c => c.CodMascotaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaConsulta == fechaConsulta);
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaConsulta == parsedFechaConsulta);
             if (consulta == null)
             {
                 return NotFound();
@@ -138,15 +156,14 @@ namespace VetApp.Controllers
         // POST: Consultas/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string codMascota, DateOnly fechaConsulta)
+        public async Task<IActionResult> DeleteConfirmed(string codMascota, string fechaConsulta)
         {
-            var consulta = await _context.Consultas.FindAsync(codMascota, fechaConsulta);
-            if (consulta != null)
+            if (!DateOnly.TryParse(fechaConsulta, out var parsedFechaConsulta))
             {
-                _context.Consultas.Remove(consulta);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
+            await _context.BorrarConsulta(codMascota, parsedFechaConsulta);
             return RedirectToAction(nameof(Index));
         }
 

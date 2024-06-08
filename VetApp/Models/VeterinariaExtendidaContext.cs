@@ -724,4 +724,21 @@ public partial class VeterinariaExtendidaContext : DbContext
 
         Database.ExecuteSqlRaw("EXEC DeleteMascota @CodMascota", codMascotaParam);
     }
+    public async Task InsertarConsulta(string codMascota, DateOnly fechaConsulta, string motivo, string diagnostico, string tratamiento, string medicacion)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC InsertarConsulta @p0, @p1, @p2, @p3, @p4, @p5",
+            parameters: new object[] { codMascota, fechaConsulta.ToString("yyyy-MM-dd"), motivo, diagnostico, tratamiento, medicacion });
+    }
+
+    public async Task ActualizarConsulta(string codMascota, DateOnly fechaConsulta, string motivo, string diagnostico, string tratamiento, string medicacion)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC ActualizarConsulta @p0, @p1, @p2, @p3, @p4, @p5",
+            parameters: new object[] { codMascota, fechaConsulta.ToString("yyyy-MM-dd"), motivo, diagnostico, tratamiento, medicacion });
+    }
+
+    public async Task BorrarConsulta(string codMascota, DateOnly fechaConsulta)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC BorrarConsulta @p0, @p1",
+            parameters: new object[] { codMascota, fechaConsulta.ToString("yyyy-MM-dd") });
+    }
 }

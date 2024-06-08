@@ -1,0 +1,40 @@
+﻿@model IEnumerable<VetApp.Models.AplicaVacuna>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.CodMascota)</th>
+            <th>@Html.DisplayNameFor(model => model.CodVacuna)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaPrevista)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaAplicacion)</th>
+            <th>@Html.DisplayNameFor(model => model.DosisAplicada)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.CodMascota)</td>
+                <td>@Html.DisplayFor(modelItem => item.CodVacuna)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaPrevista)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaAplicacion)</td>
+                <td>@Html.DisplayFor(modelItem => item.DosisAplicada)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { codMascota = item.CodMascota, codVacuna = item.CodVacuna, fechaPrevista = item.FechaPrevista }) |
+                    @Html.ActionLink("Details", "Details", new { codMascota = item.CodMascota, codVacuna = item.CodVacuna, fechaPrevista = item.FechaPrevista }) |
+                    @Html.ActionLink("Delete", "Delete", new { codMascota = item.CodMascota, codVacuna = item.CodVacuna, fechaPrevista = item.FechaPrevista })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

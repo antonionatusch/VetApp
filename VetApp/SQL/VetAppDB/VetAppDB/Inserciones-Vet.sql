@@ -82,6 +82,45 @@ INSERT INTO Consultas (codMascota, fechaConsulta, motivo, diagnostico, tratamien
 ('M004', '2024-05-04', 'Problemas respiratorios', 'Asma', 'Inhalador', 'Inhalador B, 2 veces al día'),
 ('M005', '2024-05-05', 'Vacunación', 'Vacunación de rutina', 'Vacuna aplicada', 'Vacuna C, 1 dosis');
 
+INSERT INTO Hospedajes (fechaIngreso, fechaSalida, observaciones)
+VALUES 
+('2024-06-01', '2024-06-10', 'Estancia tranquila'),
+('2024-06-05', '2024-06-15', 'Algunos ladridos durante la noche'),
+('2024-06-10', '2024-06-20', 'Problemas de convivencia con otras mascotas'),
+('2024-06-15', '2024-06-25', 'Requiere atención especial'),
+('2024-06-20', '2024-06-30', 'Buena adaptación al entorno');
+
+INSERT INTO Comodidades (idComodidad, nombre, descripcion, precioUnitario)
+VALUES 
+('C001', 'Cama Deluxe', 'Cama cómoda para mascotas', 30.00),
+('C002', 'Zona de Juegos', 'Área de recreación para mascotas', 25.00),
+('C003', 'Piscina', 'Piscina para mascotas', 40.00),
+('C004', 'Gimnasio', 'Gimnasio para mascotas', 35.00),
+('C005', 'Spa', 'Spa para mascotas', 50.00);
+
+INSERT INTO Alimentos (codAlimento, nombre, descripcion, proveedor, precioUnitario)
+VALUES 
+('A001', 'Dog Food', 'Alimento para perros', 'Proveedor A', 20.00),
+('A002', 'Cat Food', 'Alimento para gatos', 'Proveedor B', 15.00),
+('A003', 'Premium Dog Food', 'Alimento premium para perros', 'Proveedor C', 25.00),
+('A004', 'Premium Cat Food', 'Alimento premium para gatos', 18.00),
+('A005', 'Puppy Food', 'Alimento para cachorros', 22.00);
+
+INSERT INTO Medicamentos (codMedicamento, laboratorio, presentacion, pesoNeto, precioUnitario, nombre)
+VALUES 
+('MED001', 'Lab A', 'Tabletas', 0.50, 10.00, 'Antipulgas'),
+('MED002', 'Lab B', 'Jarabe', 1.00, 12.00, 'Antiparasitario'),
+('MED003', 'Lab C', 'Inyección', 0.10, 15.00, 'Antibiótico'),
+('MED004', 'Lab D', 'Cápsulas', 0.25, 8.00, 'Antiinflamatorio'),
+('MED005', 'Lab E', 'Crema', 0.20, 5.00, 'Antiséptico');
+
+INSERT INTO ConsumoHotel (idHospedaje, idServicio, codMascota, codAlimento, codMedicamento, idComodidad, NIT, observaciones, cantidadAlim, cantidadMedic, cantidadCom)
+VALUES 
+(1, 'H001', 'M001', 'A001', 'MED001', 'C001', '123456789', 'Consumo regular', 2, 1, 1),
+(2, 'H002', 'M002', 'A002', 'MED002', 'C002', '987654321', 'Consumo especial', 3, 2, 1),
+(3, 'H003', 'M003', 'A003', 'MED003', 'C003', '234567890', 'Requiere atención especial', 4, 3, 2),
+(4, 'H001', 'M004', 'A004', 'MED004', 'C004', '345678901', 'Problemas de convivencia', 1, 1, 1),
+(5, 'H002', 'M005', 'A005', 'MED005', 'C005', '456789012', 'Buena adaptación', 2, 2, 1);
 
 
 /* SELECT * FROM Servicios
@@ -93,5 +132,9 @@ SELECT * FROM Servicios
 SELECT * FROM ConsumosVet
 SELECT * FROM Vacunas 
 SELECT * FROM Consultas
-SELECT * FROM AplicaVacuna
+SELECT * FROM Hospedajes;
+SELECT * FROM Comodidades;
+SELECT * FROM Alimentos;
+SELECT * FROM Medicamentos;
+SELECT * FROM ConsumoHotel;
 */
