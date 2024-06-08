@@ -694,3 +694,62 @@ GO
     @fechaConsulta = '2024-06-07';
 	SELECT * FROM Consultas
 */
+
+-- Aplica Vacunas
+
+CREATE PROCEDURE InsertarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE,
+    @fechaAplicacion DATE = NULL,
+    @dosisAplicada INT = 0
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna ya existe.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO AplicaVacuna (codMascota, codVacuna, fechaPrevista, fechaAplicacion, dosisAplicada)
+    VALUES (@codMascota, @codVacuna, @fechaPrevista, ISNULL(@fechaAplicacion, GETDATE()), @dosisAplicada);
+END;
+GO
+
+CREATE PROCEDURE ActualizarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE,
+    @fechaAplicacion DATE,
+    @dosisAplicada INT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna no existe.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE AplicaVacuna
+    SET fechaAplicacion = @fechaAplicacion,
+        dosisAplicada = @dosisAplicada
+    WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista;
+END;
+GO
+
+CREATE PROCEDURE BorrarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna no existe.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM AplicaVacuna
+    WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista;
+END;
+GO

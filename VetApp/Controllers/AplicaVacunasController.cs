@@ -61,9 +61,24 @@ namespace VetApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(aplicaVacuna);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    if (aplicaVacuna.FechaPrevista < DateOnly.FromDateTime(DateTime.Now))
+                    {
+                        ModelState.AddModelError("FechaPrevista", "La Fecha Prevista no puede ser anterior a la fecha de hoy.");
+                        ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "CodMascota", aplicaVacuna.CodMascota);
+                        ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "CodVacuna", aplicaVacuna.CodVacuna);
+                        return View(aplicaVacuna);
+                    }
+
+                    _context.Add(aplicaVacuna);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error al crear la aplicación de vacuna: " + ex.Message);
+                }
             }
             ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "CodMascota", aplicaVacuna.CodMascota);
             ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "CodVacuna", aplicaVacuna.CodVacuna);
@@ -102,6 +117,14 @@ namespace VetApp.Controllers
             {
                 try
                 {
+                    if (aplicaVacuna.FechaPrevista < DateOnly.FromDateTime(DateTime.Now))
+                    {
+                        ModelState.AddModelError("FechaPrevista", "La Fecha Prevista no puede ser anterior a la fecha de hoy.");
+                        ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "CodMascota", aplicaVacuna.CodMascota);
+                        ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "CodVacuna", aplicaVacuna.CodVacuna);
+                        return View(aplicaVacuna);
+                    }
+
                     _context.Update(aplicaVacuna);
                     await _context.SaveChangesAsync();
                 }

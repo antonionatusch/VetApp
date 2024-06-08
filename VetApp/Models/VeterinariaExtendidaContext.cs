@@ -741,4 +741,39 @@ public partial class VeterinariaExtendidaContext : DbContext
         await Database.ExecuteSqlRawAsync("EXEC BorrarConsulta @p0, @p1",
             parameters: new object[] { codMascota, fechaConsulta.ToString("yyyy-MM-dd") });
     }
+
+    public void InsertarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista, DateOnly? fechaAplicacion, int dosisAplicada)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+        var fechaAplicacionParam = new SqlParameter("@FechaAplicacion", SqlDbType.Date) { Value = (object)fechaAplicacion ?? DBNull.Value };
+        var dosisAplicadaParam = new SqlParameter("@DosisAplicada", SqlDbType.Int) { Value = dosisAplicada };
+
+        Database.ExecuteSqlRaw("EXEC InsertarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista, @FechaAplicacion, @DosisAplicada",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam, fechaAplicacionParam, dosisAplicadaParam);
+    }
+
+    public void ActualizarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista, DateOnly? nuevaFechaAplicacion, int nuevaDosisAplicada)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+        var nuevaFechaAplicacionParam = new SqlParameter("@FechaAplicacion", SqlDbType.Date) { Value = (object)nuevaFechaAplicacion ?? DBNull.Value };
+        var nuevaDosisAplicadaParam = new SqlParameter("@DosisAplicada", SqlDbType.Int) { Value = nuevaDosisAplicada };
+
+        Database.ExecuteSqlRaw("EXEC ActualizarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista, @FechaAplicacion, @DosisAplicada",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam, nuevaFechaAplicacionParam, nuevaDosisAplicadaParam);
+    }
+
+    public void BorrarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+
+        Database.ExecuteSqlRaw("EXEC BorrarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam);
+    }
+
 }
