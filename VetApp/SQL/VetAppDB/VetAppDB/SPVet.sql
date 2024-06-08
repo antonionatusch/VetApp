@@ -797,18 +797,12 @@ BEGIN
         @nit
     FROM 
         Consultas cons
-    LEFT JOIN 
-        ConsumosVet c
-    ON 
-        cons.codMascota = c.codMascota AND c.idServicio = 'CG000'
     WHERE 
         cons.fechaConsulta BETWEEN @fechaInicio AND @fechaFin
-        AND c.codMascota IS NULL
-        AND cons.codMascota = @codMascota
-    GROUP BY 
-        cons.codMascota, cons.fechaConsulta, cons.motivo, cons.diagnostico, cons.tratamiento, cons.medicacion;
+        AND cons.codMascota = @codMascota;
 END;
 GO
+
 
 
 
@@ -822,9 +816,9 @@ GO
 SELECT * FROM AplicaVacuna
 SELECT * FROM Consultas
 SELECT * FROM ConsumosVet
-INSERT INTO AplicaVacuna VALUES ('M001', 'V002', '2024-06-08', '2024-05-02', 2)
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
 
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M002', @observaciones = 'Registro automático', @nit = '0987654321';
 
 
 */

@@ -46,23 +46,7 @@ namespace VetApp.Controllers
                     $"EXEC InsertarConsumoVet {FechaInicio}, {FechaFin}, {CodMascota}, {Observaciones}, {Nit}");
 
                 // Verificar e insertar consultas generales
-                var consultas = await _context.Consultas
-                    .Where(c => c.CodMascota == CodMascota && c.FechaConsulta >= FechaInicio && c.FechaConsulta <= FechaFin)
-                    .ToListAsync();
-
-                foreach (var consulta in consultas)
-                {
-                    await _context.ConsumosVets.AddAsync(new ConsumosVet
-                    {
-                        CodMascota = consulta.CodMascota,
-                        CodVacuna = null,
-                        IdServicio = "CG000", // ID del servicio de consultas generales
-                        Observaciones = Observaciones,
-                        CantVacunas = 0,
-                        Nit = Nit,
-                        IdConsumoVet = 0 // Este campo será autoincremental
-                    });
-                }
+               
 
                 await _context.SaveChangesAsync();
 

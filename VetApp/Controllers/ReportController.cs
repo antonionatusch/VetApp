@@ -62,26 +62,7 @@ namespace VetApp.Controllers
                         });
                     }
                 }
-                var consultas = await _context.Consultas
-                   .Where(c => c.FechaConsulta >= fechaInicio && c.FechaConsulta <= fechaFin)
-                   .ToListAsync();
-
-                foreach (var consulta in consultas)
-                {
-                    reportResults.Add(new ConsumosVetReportViewModel
-                    {
-                        CodMascota = consulta.CodMascota,
-                        NombreMascota = _context.Mascotas.FirstOrDefault(m => m.CodMascota == consulta.CodMascota)?.Nombre,
-                        Cliente = _context.Clientes.FirstOrDefault(c => c.CodCliente == consulta.CodMascotaNavigation.CodCliente)?.Apellido,
-                        IdServicio = "CG000", // ID del servicio de consultas generales
-                        NombreServicio = "ConsultaGeneral",
-                        Observaciones = consulta.Diagnostico,
-                        CantVacunas = 0,
-                        Nit = string.Empty,
-                        Fecha = consulta.FechaConsulta,
-                        PrecioTotal = _context.Servicios.FirstOrDefault(s => s.IdServicio == "CG000")?.Precio ?? 0
-                    });
-                }
+                
 
                 await _context.Database.CloseConnectionAsync();
                 // Obtén el valor del parámetro de salida
