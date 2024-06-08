@@ -819,9 +819,6 @@ SELECT * FROM AplicaVacuna
 SELECT * FROM Consultas
 SELECT * FROM ConsumosVet
 
-INSERT INTO Consultas VALUES ('M001', '2024-07-06', 'Chequeo recurrente', 'Sin novedad', 'Normal', 'Ninguna')
-
-
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @observaciones = 'Registro automático', @nit = '1234567890';
 
 
