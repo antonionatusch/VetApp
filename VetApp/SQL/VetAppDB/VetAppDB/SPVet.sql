@@ -753,3 +753,77 @@ BEGIN
     WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista;
 END;
 GO
+
+-- Insertando Consumos Médicos con SP
+
+CREATE PROCEDURE InsertarConsumoVet
+    @fechaInicio DATE,
+    @fechaFin DATE,
+    @observaciones VARCHAR(200),
+    @nit VARCHAR(20)
+AS
+BEGIN
+    -- Insertar aplicaciones de vacunas
+    INSERT INTO ConsumosVet (codMascota, codVacuna, idServicio, observaciones, cantVacunas, nit)
+    SELECT 
+        a.codMascota,
+        a.codVacuna,
+        'AV000', -- ID del servicio de aplicación de vacunas
+        @observaciones,
+        SUM(a.dosisAplicada),
+        @nit
+    FROM 
+        AplicaVacuna a
+    LEFT JOIN 
+        ConsumosVet c
+    ON 
+        a.codMascota = c.codMascota AND a.codVacuna = c.codVacuna AND c.idServicio = 'AV000'
+    WHERE 
+        a.fechaAplicacion BETWEEN @fechaInicio AND @fechaFin
+        AND c.codMascota IS NULL
+    GROUP BY 
+        a.codMascota, a.codVacuna;
+
+    -- Insertar consultas
+    INSERT INTO ConsumosVet (codMascota, codVacuna, idServicio, observaciones, cantVacunas, nit)
+    SELECT 
+        cons.codMascota,
+        NULL, -- Sin vacuna en las consultas generales
+        'CG000', -- ID del servicio de consultas generales
+        @observaciones,
+        0, -- Sin vacunas en consultas generales
+        @nit
+    FROM 
+        Consultas cons
+    LEFT JOIN 
+        ConsumosVet c
+    ON 
+        cons.codMascota = c.codMascota AND c.idServicio = 'CG000'
+    WHERE 
+        cons.fechaConsulta BETWEEN @fechaInicio AND @fechaFin
+        AND c.codMascota IS NULL
+    GROUP BY 
+        cons.codMascota, cons.fechaConsulta, cons.motivo, cons.diagnostico, cons.tratamiento, cons.medicacion;
+END;
+GO
+
+
+
+
+
+-- pruebas
+
+/*
+
+SELECT * FROM AplicaVacuna
+SELECT * FROM Consultas
+SELECT * FROM ConsumosVet
+
+INSERT INTO Consultas VALUES ('M001', '2024-07-06', 'Chequeo recurrente', 'Sin novedad', 'Normal', 'Ninguna')
+
+
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @observaciones = 'Registro automático', @nit = '1234567890';
+
+
+*/
+
