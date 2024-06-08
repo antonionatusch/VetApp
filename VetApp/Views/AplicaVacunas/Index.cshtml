@@ -1,0 +1,53 @@
+﻿@model IEnumerable<VetApp.Models.AplicaVacuna>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaAplicacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DosisAplicada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodMascotaNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodVacunaNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaAplicacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DosisAplicada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CodMascotaNavigation.CodMascota)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CodVacunaNavigation.CodVacuna)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
