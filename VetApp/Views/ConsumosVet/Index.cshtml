@@ -12,13 +12,27 @@
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.First().IdConsumoVet)</th>
-            <th>@Html.DisplayNameFor(model => model.First().Observaciones)</th>
-            <th>@Html.DisplayNameFor(model => model.First().CantVacunas)</th>
-            <th>@Html.DisplayNameFor(model => model.First().Nit)</th>
-            <th>@Html.DisplayNameFor(model => model.First().CodMascotaNavigation.Nombre)</th>
-            <th>@Html.DisplayNameFor(model => model.First().CodVacunaNavigation.Nombre)</th>
-            <th>@Html.DisplayNameFor(model => model.First().IdServicioNavigation.Nombre)</th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdConsumoVet)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Observaciones)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CantVacunas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodMascotaNavigation.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodVacunaNavigation.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdServicioNavigation.Nombre)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -26,17 +40,31 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.IdConsumoVet)</td>
-                <td>@Html.DisplayFor(modelItem => item.Observaciones)</td>
-                <td>@Html.DisplayFor(modelItem => item.CantVacunas)</td>
-                <td>@Html.DisplayFor(modelItem => item.Nit)</td>
-                <td>@Html.DisplayFor(modelItem => item.CodMascotaNavigation.Nombre)</td>
-                <td>@Html.DisplayFor(modelItem => item.CodVacunaNavigation.Nombre)</td>
-                <td>@Html.DisplayFor(modelItem => item.IdServicioNavigation.Nombre)</td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { codMascota = item.CodMascota, idServicio = item.IdServicio, idConsumoVet = item.IdConsumoVet }) |
-                    @Html.ActionLink("Details", "Details", new { codMascota = item.CodMascota, idServicio = item.IdServicio, idConsumoVet = item.IdConsumoVet }) |
-                    @Html.ActionLink("Delete", "Delete", new { codMascota = item.CodMascota, idServicio = item.IdServicio, idConsumoVet = item.IdConsumoVet })
+                    @Html.DisplayFor(modelItem => item.IdConsumoVet)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Observaciones)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CantVacunas)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodMascotaNavigation.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodVacunaNavigation.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdServicioNavigation.Nombre)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.IdConsumoVet }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.IdConsumoVet }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.IdConsumoVet })
                 </td>
             </tr>
         }

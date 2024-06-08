@@ -1,6 +1,4 @@
-﻿@model VetApp.Models.ConsumosVetCreateViewModel
-
-@{
+﻿@{
     ViewData["Title"] = "Create";
 }
 
@@ -11,30 +9,30 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FechaInicio" class="control-label"></label>
-                <input asp-for="FechaInicio" class="form-control" type="date" />
-                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                <label for="FechaInicio">Fecha Inicio</label>
+                <input type="date" class="form-control" id="FechaInicio" name="FechaInicio" required />
             </div>
             <div class="form-group">
-                <label asp-for="FechaFin" class="control-label"></label>
-                <input asp-for="FechaFin" class="form-control" type="date" />
-                <span asp-validation-for="FechaFin" class="text-danger"></span>
+                <label for="FechaFin">Fecha Fin</label>
+                <input type="date" class="form-control" id="FechaFin" name="FechaFin" required />
             </div>
             <div class="form-group">
-                <label asp-for="CodMascota" class="control-label"></label>
-                <select asp-for="CodMascota" class="form-control" asp-items="ViewBag.CodMascota"></select>
+                <label for="CodMascota">Código de Mascota</label>
+                <select class="form-control" id="CodMascota" name="CodMascota">
+                    @foreach (var mascota in ViewBag.CodMascota as SelectList)
+                    {
+                        <option value="@mascota.Value">@mascota.Text</option>
+                    }
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <input asp-for="Observaciones" class="form-control" />
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
+                <label for="Observaciones">Observaciones</label>
+                <input type="text" class="form-control" id="Observaciones" name="Observaciones" maxlength="200" required />
             </div>
             <div class="form-group">
-                <label asp-for="Nit" class="control-label"></label>
-                <input asp-for="Nit" class="form-control" />
-                <span asp-validation-for="Nit" class="text-danger"></span>
+                <label for="Nit">NIT</label>
+                <input type="text" class="form-control" id="Nit" name="Nit" maxlength="20" required />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -52,5 +50,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
-

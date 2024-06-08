@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using VetApp.Models;
 
 namespace VetApp.Controllers
@@ -26,7 +25,6 @@ namespace VetApp.Controllers
                 .Include(c => c.CodVacunaNavigation)
                 .Include(c => c.IdServicioNavigation)
                 .ToListAsync();
-
             return View(consumosVets);
         }
 
@@ -40,114 +38,39 @@ namespace VetApp.Controllers
         // POST: ConsumosVet/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FechaInicio,FechaFin,CodMascota,Observaciones,Nit")] ConsumosVetCreateViewModel model)
+        public async Task<IActionResult> Create(DateOnly FechaInicio, DateOnly FechaFin, string CodMascota, string Observaciones, string Nit)
         {
             if (ModelState.IsValid)
             {
                 await _context.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC InsertarConsumoVet {model.FechaInicio}, {model.FechaFin}, {model.CodMascota}, {model.Observaciones}, {model.Nit}");
+                    $"EXEC InsertarConsumoVet {FechaInicio}, {FechaFin}, {CodMascota}, {Observaciones}, {Nit}");
+
+                // Verificar e insertar consultas generales
+                var consultas = await _context.Consultas
+                    .Where(c => c.CodMascota == CodMascota && c.FechaConsulta >= FechaInicio && c.FechaConsulta <= FechaFin)
+                    .ToListAsync();
+
+                foreach (var consulta in consultas)
+                {
+                    await _context.ConsumosVets.AddAsync(new ConsumosVet
+                    {
+                        CodMascota = consulta.CodMascota,
+                        CodVacuna = null,
+                        IdServicio = "CG000", // ID del servicio de consultas generales
+                        Observaciones = Observaciones,
+                        CantVacunas = 0,
+                        Nit = Nit,
+                        IdConsumoVet = 0 // Este campo será autoincremental
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", model.CodMascota);
-            return View(model);
-        }
-
-        // GET: ConsumosVet/Edit
-        public async Task<IActionResult> Edit(string codMascota, string idServicio, int idConsumoVet)
-        {
-            if (codMascota == null || idServicio == null || idConsumoVet == 0)
-            {
-                return NotFound();
-            }
-
-            var consumosVet = await _context.ConsumosVets.FindAsync(codMascota, idServicio, idConsumoVet);
-            if (consumosVet == null)
-            {
-                return NotFound();
-            }
-            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", consumosVet.CodMascota);
-            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre", consumosVet.CodVacuna);
-            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre", consumosVet.IdServicio);
-            return View(consumosVet);
-        }
-
-        // POST: ConsumosVet/Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string codMascota, string idServicio, int idConsumoVet, [Bind("CodMascota,CodVacuna,IdServicio,Observaciones,CantVacunas,Nit")] ConsumosVet consumosVet)
-        {
-            if (codMascota != consumosVet.CodMascota || idServicio != consumosVet.IdServicio || idConsumoVet != consumosVet.IdConsumoVet)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(consumosVet);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ConsumosVetExists(consumosVet.CodMascota, consumosVet.IdServicio, consumosVet.IdConsumoVet))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", consumosVet.CodMascota);
-            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre", consumosVet.CodVacuna);
-            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre", consumosVet.IdServicio);
-            return View(consumosVet);
-        }
-
-        // GET: ConsumosVet/Delete
-        public async Task<IActionResult> Delete(string codMascota, string idServicio, int idConsumoVet)
-        {
-            if (codMascota == null || idServicio == null || idConsumoVet == 0)
-            {
-                return NotFound();
-            }
-
-            var consumosVet = await _context.ConsumosVets
-                .Include(c => c.CodMascotaNavigation)
-                .Include(c => c.CodVacunaNavigation)
-                .Include(c => c.IdServicioNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.IdServicio == idServicio && m.IdConsumoVet == idConsumoVet);
-
-            if (consumosVet == null)
-            {
-                return NotFound();
-            }
-
-            return View(consumosVet);
-        }
-
-        // POST: ConsumosVet/Delete
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string codMascota, string idServicio, int idConsumoVet)
-        {
-            var consumosVet = await _context.ConsumosVets.FindAsync(codMascota, idServicio, idConsumoVet);
-            if (consumosVet != null)
-            {
-                _context.ConsumosVets.Remove(consumosVet);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ConsumosVetExists(string codMascota, string idServicio, int idConsumoVet)
-        {
-            return _context.ConsumosVets.Any(e => e.CodMascota == codMascota && e.IdServicio == idServicio && e.IdConsumoVet == idConsumoVet);
+            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", CodMascota);
+            return View();
         }
     }
 }
