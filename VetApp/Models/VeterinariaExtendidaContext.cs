@@ -609,4 +609,44 @@ public partial class VeterinariaExtendidaContext : DbContext
 
         Database.ExecuteSqlRaw("EXEC DeletePersona @Ci", ciParam);
     }
+
+    public void InsertCliente(string codCliente, string apellido, string banco, string correo, string cuentaBanco, string direccion, string telefono)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+        new SqlParameter("@Apellido", SqlDbType.NVarChar) { Value = apellido },
+        new SqlParameter("@Banco", SqlDbType.NVarChar) { Value = banco },
+        new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+        new SqlParameter("@CuentaBanco", SqlDbType.NVarChar) { Value = cuentaBanco },
+        new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion },
+        new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono }
+    };
+
+        Database.ExecuteSqlRaw("EXEC InsertCliente @CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono", parameters);
+    }
+
+    public void UpdateCliente(string codCliente, string apellido, string banco, string correo, string cuentaBanco, string direccion, string telefono)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+        new SqlParameter("@Apellido", SqlDbType.NVarChar) { Value = apellido },
+        new SqlParameter("@Banco", SqlDbType.NVarChar) { Value = banco },
+        new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+        new SqlParameter("@CuentaBanco", SqlDbType.NVarChar) { Value = cuentaBanco },
+        new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion },
+        new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono }
+    };
+
+        Database.ExecuteSqlRaw("EXEC UpdateCliente @CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono", parameters);
+    }
+
+    public void DeleteCliente(string codCliente)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+
+        Database.ExecuteSqlRaw("EXEC DeleteCliente @CodCliente", codClienteParam);
+    }
+
 }

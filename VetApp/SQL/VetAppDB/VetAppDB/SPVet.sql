@@ -318,3 +318,96 @@ EXEC DeleteCliente 'C123';
 
 
 */
+-- clientes
+
+CREATE PROCEDURE InsertCliente
+    @CodCliente VARCHAR(20),
+    @Apellido VARCHAR(80),
+    @Banco VARCHAR(80),
+    @Correo VARCHAR(50),
+    @CuentaBanco VARCHAR(40),
+    @Direccion VARCHAR(60),
+    @Telefono VARCHAR(50)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Apellido) > 80
+        SET @ErrorMessages = @ErrorMessages + 'apellido, ';
+    IF LEN(@Banco) > 80
+        SET @ErrorMessages = @ErrorMessages + 'banco, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@CuentaBanco) > 40
+        SET @ErrorMessages = @ErrorMessages + 'cuentaBanco, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    INSERT INTO Clientes (codCliente, apellido, banco, correo, cuentaBanco, direccion, telefono)
+    VALUES (@CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono);
+END
+GO
+
+CREATE PROCEDURE UpdateCliente
+    @CodCliente VARCHAR(20),
+    @Apellido VARCHAR(80),
+    @Banco VARCHAR(80),
+    @Correo VARCHAR(50),
+    @CuentaBanco VARCHAR(40),
+    @Direccion VARCHAR(60),
+    @Telefono VARCHAR(50)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Apellido) > 80
+        SET @ErrorMessages = @ErrorMessages + 'apellido, ';
+    IF LEN(@Banco) > 80
+        SET @ErrorMessages = @ErrorMessages + 'banco, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@CuentaBanco) > 40
+        SET @ErrorMessages = @ErrorMessages + 'cuentaBanco, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    UPDATE Clientes
+    SET apellido = @Apellido,
+        banco = @Banco,
+        correo = @Correo,
+        cuentaBanco = @CuentaBanco,
+        direccion = @Direccion,
+        telefono = @Telefono
+    WHERE codCliente = @CodCliente;
+END
+GO
+
+CREATE PROCEDURE DeleteCliente
+    @CodCliente VARCHAR(20)
+AS
+BEGIN
+    DELETE FROM Clientes
+    WHERE codCliente = @CodCliente;
+END
+GO
+

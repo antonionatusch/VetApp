@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VetApp.Models;
 
@@ -49,17 +47,30 @@ namespace VetApp.Controllers
         }
 
         // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CodCliente,Apellido,CuentaBanco,Banco,Direccion,Telefono,Correo")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("CodCliente,Apellido,Banco,Correo,CuentaBanco,Direccion,Telefono")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var result = await _context.Database.ExecuteSqlRawAsync(
+                        "EXEC InsertCliente @CodCliente = {0}, @Apellido = {1}, @Banco = {2}, @Correo = {3}, @CuentaBanco = {4}, @Direccion = {5}, @Telefono = {6}",
+                        cliente.CodCliente, cliente.Apellido, cliente.Banco, cliente.Correo, cliente.CuentaBanco, cliente.Direccion, cliente.Telefono);
+
+                    if (result == -1)
+                    {
+                        ModelState.AddModelError(string.Empty, "Error inserting data, possible truncated values.");
+                        return View(cliente);
+                    }
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                }
             }
             return View(cliente);
         }
@@ -81,11 +92,9 @@ namespace VetApp.Controllers
         }
 
         // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CodCliente,Apellido,CuentaBanco,Banco,Direccion,Telefono,Correo")] Cliente cliente)
+        public async Task<IActionResult> Edit(string id, [Bind("CodCliente,Apellido,Banco,Correo,CuentaBanco,Direccion,Telefono")] Cliente cliente)
         {
             if (id != cliente.CodCliente)
             {
@@ -96,21 +105,22 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
+                    var result = await _context.Database.ExecuteSqlRawAsync(
+                        "EXEC UpdateCliente @CodCliente = {0}, @Apellido = {1}, @Banco = {2}, @Correo = {3}, @CuentaBanco = {4}, @Direccion = {5}, @Telefono = {6}",
+                        cliente.CodCliente, cliente.Apellido, cliente.Banco, cliente.Correo, cliente.CuentaBanco, cliente.Direccion, cliente.Telefono);
+
+                    if (result == -1)
+                    {
+                        ModelState.AddModelError(string.Empty, "Error updating data, possible truncated values.");
+                        return View(cliente);
+                    }
+
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!ClienteExists(cliente.CodCliente))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(cliente);
         }
@@ -138,14 +148,24 @@ namespace VetApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente != null)
+            try
             {
-                _context.Clientes.Remove(cliente);
-            }
+                var result = await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC DeleteCliente @CodCliente = {0}", id);
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                if (result == -1)
+                {
+                    ModelState.AddModelError(string.Empty, "Error deleting data.");
+                    return View();
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return View();
+            }
         }
 
         private bool ClienteExists(string id)
