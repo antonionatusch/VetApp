@@ -822,7 +822,7 @@ GO
 SELECT * FROM AplicaVacuna
 SELECT * FROM Consultas
 SELECT * FROM ConsumosVet
-
+INSERT INTO AplicaVacuna VALUES ('M001', 'V002', '2024-06-08', '2024-05-02', 2)
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
 
 
