@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VetApp.Models;
 
@@ -49,17 +48,30 @@ namespace VetApp.Controllers
         }
 
         // POST: Personas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Ci,Nombre,Telefono,Correo,Direccion")] Persona persona)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(persona);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.InsertPersona(persona.Ci, persona.Nombre, persona.Telefono, persona.Correo, persona.Direccion);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    var sqlException = ex.GetBaseException() as SqlException;
+                    if (sqlException != null && sqlException.Number == 50000)
+                    {
+                        ModelState.AddModelError(string.Empty, sqlException.Message);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
+                    }
+                }
             }
             return View(persona);
         }
@@ -81,8 +93,6 @@ namespace VetApp.Controllers
         }
 
         // POST: Personas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Ci,Nombre,Telefono,Correo,Direccion")] Persona persona)
@@ -96,21 +106,22 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    _context.Update(persona);
+                    _context.UpdatePersona(persona.Ci, persona.Nombre, persona.Telefono, persona.Correo, persona.Direccion);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException ex)
                 {
-                    if (!PersonaExists(persona.Ci))
+                    var sqlException = ex.GetBaseException() as SqlException;
+                    if (sqlException != null && sqlException.Number == 50000)
                     {
-                        return NotFound();
+                        ModelState.AddModelError(string.Empty, sqlException.Message);
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(persona);
         }
@@ -138,14 +149,17 @@ namespace VetApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var persona = await _context.Personas.FindAsync(id);
-            if (persona != null)
+            try
             {
-                _context.Personas.Remove(persona);
+                _context.DeletePersona(id);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return View();
+            }
         }
 
         private bool PersonaExists(string id)

@@ -158,4 +158,163 @@ SELECT @resultado AS Resultado;
 
 
 */
+-- insercion asociacion
 
+CREATE PROCEDURE PersonaCliente_Insert
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20),
+    @FechaAsociacion date
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM PersonaCliente WHERE CodCliente = @CodCliente AND Ci = @Ci)
+    BEGIN
+        INSERT INTO PersonaCliente (CodCliente, Ci, FechaAsociacion)
+        VALUES (@CodCliente, @Ci, @FechaAsociacion);
+    END
+    ELSE
+    BEGIN
+        RAISERROR('La asociación ya existe.', 16, 1);
+    END
+END
+
+SELECT * FROM Personas
+SELECT * FROM Clientes
+SELECT * FROM PersonaCliente
+/*
+-- Inserta una nueva asociación
+EXEC PersonaCliente_Insert @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-06-07';
+*/
+
+CREATE PROCEDURE PersonaCliente_Update
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20),
+    @FechaAsociacion date
+AS
+BEGIN
+    UPDATE PersonaCliente
+    SET FechaAsociacion = @FechaAsociacion
+    WHERE CodCliente = @CodCliente AND Ci = @Ci;
+END
+
+SELECT * FROM PersonaCliente
+/*
+-- Actualiza la fecha de asociación
+EXEC PersonaCliente_Update @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-07-01';
+*/
+
+CREATE PROCEDURE PersonaCliente_Delete
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20)
+AS
+BEGIN
+    DELETE FROM PersonaCliente
+    WHERE CodCliente = @CodCliente AND Ci = @Ci;
+END
+
+/*
+-- Elimina la asociación
+EXEC PersonaCliente_Delete @CodCliente = 'C001', @Ci = '23232';
+*/
+
+
+CREATE PROCEDURE InsertPersona
+    @Ci VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Direccion VARCHAR(60)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@Ci) > 20
+        SET @ErrorMessages = @ErrorMessages + 'ci, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    INSERT INTO Personas (ci, nombre, telefono, correo, direccion)
+    VALUES (@Ci, @Nombre, @Telefono, @Correo, @Direccion);
+END
+
+
+CREATE PROCEDURE UpdatePersona
+    @Ci VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Direccion VARCHAR(60)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@Ci) > 20
+        SET @ErrorMessages = @ErrorMessages + 'ci, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    UPDATE Personas
+    SET nombre = @Nombre,
+        telefono = @Telefono,
+        correo = @Correo,
+        direccion = @Direccion
+    WHERE ci = @Ci;
+END
+GO
+
+CREATE PROCEDURE DeletePersona
+    @Ci VARCHAR(20)
+AS
+BEGIN
+    DELETE FROM Personas
+    WHERE ci = @Ci;
+END
+
+
+/*
+
+SELECT * FROM Personas
+
+-- Insertar en Personas
+EXEC InsertPersona '1234567891', 'Juan Pérez', '1234567890', 'juan@example.com', '123 Calle Falsa';
+
+-- Actualizar en Personas
+EXEC UpdatePersona '1234567891', 'Juan Pérez Actualizado', '0987654321', 'juan_actualizado@example.com', '456 Calle Verdadera';
+
+-- Eliminar en Personas
+EXEC DeletePersona '1234567891';
+
+-- Insertar en Clientes
+EXEC InsertCliente 'C123', 'Pérez', 'Juan', 'Banco XYZ', 'juan@example.com', '123456789', '123 Calle Falsa', '1234567890';
+
+-- Actualizar en Clientes
+EXEC UpdateCliente 'C123', 'Pérez Actualizado', 'Juan Actualizado', 'Banco ABC', 'juan_actualizado@example.com', '987654321', '456 Calle Verdadera', '0987654321';
+
+-- Eliminar en Clientes
+EXEC DeleteCliente 'C123';
+
+
+*/

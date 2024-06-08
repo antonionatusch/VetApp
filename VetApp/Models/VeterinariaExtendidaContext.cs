@@ -453,6 +453,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnName("telefono");
         });
 
+
         modelBuilder.Entity<PersonaCliente>(entity =>
         {
             entity.HasKey(e => new { e.CodCliente, e.Ci, e.FechaAsociacion }).HasName("PK_PC");
@@ -572,5 +573,40 @@ public partial class VeterinariaExtendidaContext : DbContext
         var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
 
         Database.ExecuteSqlRaw("EXEC PersonaCliente_Delete @CodCliente, @Ci", codClienteParam, ciParam);
+    }
+
+    public void InsertPersona(string ci, string nombre, string telefono, string correo, string direccion)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono },
+            new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+            new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion }
+        };
+
+        Database.ExecuteSqlRaw("EXEC InsertPersona @Ci, @Nombre, @Telefono, @Correo, @Direccion", parameters);
+    }
+
+    public void UpdatePersona(string ci, string nombre, string telefono, string correo, string direccion)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono },
+            new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+            new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion }
+        };
+
+        Database.ExecuteSqlRaw("EXEC UpdatePersona @Ci, @Nombre, @Telefono, @Correo, @Direccion", parameters);
+    }
+
+    public void DeletePersona(string ci)
+    {
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+
+        Database.ExecuteSqlRaw("EXEC DeletePersona @Ci", ciParam);
     }
 }
