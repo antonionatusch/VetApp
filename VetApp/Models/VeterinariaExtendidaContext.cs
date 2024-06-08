@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace VetApp.Models;
@@ -45,10 +47,7 @@ public partial class VeterinariaExtendidaContext : DbContext
 
     public virtual DbSet<Vacuna> Vacunas { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=localhost; database=VeterinariaExtendida; integrated security=true; TrustServerCertificate=true; ");
-
+ 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Alimento>(entity =>
@@ -454,6 +453,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnName("telefono");
         });
 
+
         modelBuilder.Entity<PersonaCliente>(entity =>
         {
             entity.HasKey(e => new { e.CodCliente, e.Ci, e.FechaAsociacion }).HasName("PK_PC");
@@ -548,4 +548,180 @@ public partial class VeterinariaExtendidaContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public void InsertPersonaCliente(string codCliente, string ci, DateOnly fechaAsociacion)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+        var fechaAsociacionParam = new SqlParameter("@FechaAsociacion", SqlDbType.Date) { Value = fechaAsociacion };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Insert @CodCliente, @Ci, @FechaAsociacion", codClienteParam, ciParam, fechaAsociacionParam);
+    }
+
+    public void UpdatePersonaCliente(string codCliente, string ci, DateOnly fechaAsociacion)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+        var fechaAsociacionParam = new SqlParameter("@FechaAsociacion", SqlDbType.Date) { Value = fechaAsociacion };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Update @CodCliente, @Ci, @FechaAsociacion", codClienteParam, ciParam, fechaAsociacionParam);
+    }
+
+    public void DeletePersonaCliente(string codCliente, string ci)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+
+        Database.ExecuteSqlRaw("EXEC PersonaCliente_Delete @CodCliente, @Ci", codClienteParam, ciParam);
+    }
+
+    public void InsertPersona(string ci, string nombre, string telefono, string correo, string direccion)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono },
+            new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+            new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion }
+        };
+
+        Database.ExecuteSqlRaw("EXEC InsertPersona @Ci, @Nombre, @Telefono, @Correo, @Direccion", parameters);
+    }
+
+    public void UpdatePersona(string ci, string nombre, string telefono, string correo, string direccion)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono },
+            new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+            new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion }
+        };
+
+        Database.ExecuteSqlRaw("EXEC UpdatePersona @Ci, @Nombre, @Telefono, @Correo, @Direccion", parameters);
+    }
+
+    public void DeletePersona(string ci)
+    {
+        var ciParam = new SqlParameter("@Ci", SqlDbType.NVarChar) { Value = ci };
+
+        Database.ExecuteSqlRaw("EXEC DeletePersona @Ci", ciParam);
+    }
+
+    public void InsertCliente(string codCliente, string apellido, string banco, string correo, string cuentaBanco, string direccion, string telefono)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+        new SqlParameter("@Apellido", SqlDbType.NVarChar) { Value = apellido },
+        new SqlParameter("@Banco", SqlDbType.NVarChar) { Value = banco },
+        new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+        new SqlParameter("@CuentaBanco", SqlDbType.NVarChar) { Value = cuentaBanco },
+        new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion },
+        new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono }
+    };
+
+        Database.ExecuteSqlRaw("EXEC InsertCliente @CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono", parameters);
+    }
+
+    public void UpdateCliente(string codCliente, string apellido, string banco, string correo, string cuentaBanco, string direccion, string telefono)
+    {
+        var parameters = new[]
+        {
+        new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+        new SqlParameter("@Apellido", SqlDbType.NVarChar) { Value = apellido },
+        new SqlParameter("@Banco", SqlDbType.NVarChar) { Value = banco },
+        new SqlParameter("@Correo", SqlDbType.NVarChar) { Value = correo },
+        new SqlParameter("@CuentaBanco", SqlDbType.NVarChar) { Value = cuentaBanco },
+        new SqlParameter("@Direccion", SqlDbType.NVarChar) { Value = direccion },
+        new SqlParameter("@Telefono", SqlDbType.NVarChar) { Value = telefono }
+    };
+
+        Database.ExecuteSqlRaw("EXEC UpdateCliente @CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono", parameters);
+    }
+
+    public void DeleteCliente(string codCliente)
+    {
+        var codClienteParam = new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente };
+
+        Database.ExecuteSqlRaw("EXEC DeleteCliente @CodCliente", codClienteParam);
+    }
+
+    public void InsertVacuna(string codVacuna, string nombre, string laboratorio, string prevEnfermedad, decimal dosis, decimal precioUnitario)
+    {
+        var parameters = new[]
+        {
+                new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna },
+                new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+                new SqlParameter("@Laboratorio", SqlDbType.NVarChar) { Value = laboratorio },
+                new SqlParameter("@PrevEnfermedad", SqlDbType.NVarChar) { Value = prevEnfermedad },
+                new SqlParameter("@Dosis", SqlDbType.Decimal) { Value = dosis },
+                new SqlParameter("@PrecioUnitario", SqlDbType.Decimal) { Value = precioUnitario }
+            };
+
+        Database.ExecuteSqlRaw("EXEC InsertVacuna @CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario", parameters);
+    }
+
+    public void UpdateVacuna(string codVacuna, string nombre, string laboratorio, string prevEnfermedad, decimal dosis, decimal precioUnitario)
+    {
+        var parameters = new[]
+        {
+                new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna },
+                new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+                new SqlParameter("@Laboratorio", SqlDbType.NVarChar) { Value = laboratorio },
+                new SqlParameter("@PrevEnfermedad", SqlDbType.NVarChar) { Value = prevEnfermedad },
+                new SqlParameter("@Dosis", SqlDbType.Decimal) { Value = dosis },
+                new SqlParameter("@PrecioUnitario", SqlDbType.Decimal) { Value = precioUnitario }
+            };
+
+        Database.ExecuteSqlRaw("EXEC UpdateVacuna @CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario", parameters);
+    }
+
+    public void DeleteVacuna(string codVacuna)
+    {
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+
+        Database.ExecuteSqlRaw("EXEC DeleteVacuna @CodVacuna", codVacunaParam);
+    }
+
+    public void InsertMascota(string codMascota, string codCliente, string nombre, string especie, string raza, string color, DateTime? fechaNac)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota },
+            new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
+            new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
+            new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
+            new SqlParameter("@FechaNac", SqlDbType.Date) { Value = (object)fechaNac ?? DBNull.Value }
+        };
+
+        Database.ExecuteSqlRaw("EXEC InsertMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
+    }
+
+    public void UpdateMascota(string codMascota, string codCliente, string nombre, string especie, string raza, string color, DateTime? fechaNac)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota },
+            new SqlParameter("@CodCliente", SqlDbType.NVarChar) { Value = codCliente },
+            new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+            new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
+            new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
+            new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
+            new SqlParameter("@FechaNac", SqlDbType.Date) { Value = (object)fechaNac ?? DBNull.Value }
+        };
+
+        Database.ExecuteSqlRaw("EXEC UpdateMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
+    }
+
+    public void DeleteMascota(string codMascota)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+
+        Database.ExecuteSqlRaw("EXEC DeleteMascota @CodMascota", codMascotaParam);
+    }
 }

@@ -1,0 +1,45 @@
+﻿@model VetApp.Models.PersonaCliente
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>PersonaCliente</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CodCliente" />
+            <input type="hidden" asp-for="Ci" />
+            <div class="form-group">
+                <label asp-for="CodCliente" class="control-label"></label>
+                <select asp-for="CodCliente" class="form-control" asp-items="ViewBag.CodCliente" disabled></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ci" class="control-label"></label>
+                <select asp-for="Ci" class="form-control" asp-items="ViewBag.Ci" disabled></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaAsociacion" class="control-label"></label>
+                <input type="date" asp-for="FechaAsociacion" class="form-control" />
+                <span asp-validation-for="FechaAsociacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

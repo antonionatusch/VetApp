@@ -1,0 +1,40 @@
+﻿@model IEnumerable<VetApp.Models.Consulta>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Motivo)</th>
+            <th>@Html.DisplayNameFor(model => model.Diagnostico)</th>
+            <th>@Html.DisplayNameFor(model => model.Tratamiento)</th>
+            <th>@Html.DisplayNameFor(model => model.Medicacion)</th>
+            <th>@Html.DisplayNameFor(model => model.CodMascotaNavigation.CodMascota)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Motivo)</td>
+                <td>@Html.DisplayFor(modelItem => item.Diagnostico)</td>
+                <td>@Html.DisplayFor(modelItem => item.Tratamiento)</td>
+                <td>@Html.DisplayFor(modelItem => item.Medicacion)</td>
+                <td>@Html.DisplayFor(modelItem => item.CodMascotaNavigation.CodMascota)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { codMascota = item.CodMascota, fechaConsulta = item.FechaConsulta }) |
+                    @Html.ActionLink("Details", "Details", new { codMascota = item.CodMascota, fechaConsulta = item.FechaConsulta }) |
+                    @Html.ActionLink("Delete", "Delete", new { codMascota = item.CodMascota, fechaConsulta = item.FechaConsulta })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

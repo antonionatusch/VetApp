@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using System.Globalization;
+using VetApp.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<VeterinariaExtendidaContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Conexion")));
+
+var cultureInfo = new CultureInfo("en-US"); // Cambia esto al código de cultura que prefieras
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var app = builder.Build();
 

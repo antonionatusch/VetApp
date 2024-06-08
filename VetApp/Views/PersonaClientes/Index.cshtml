@@ -1,0 +1,48 @@
+﻿@model IEnumerable<VetApp.Models.PersonaCliente>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CiNavigation.Ci)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodClienteNavigation.CodCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaAsociacion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CiNavigation.Ci)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodClienteNavigation.CodCliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaAsociacion)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion }) |
+                    @Html.ActionLink("Details", "Details", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion }) |
+                    @Html.ActionLink("Delete", "Delete", new { codCliente = item.CodCliente, ci = item.Ci, fechaAsociacion = item.FechaAsociacion })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
