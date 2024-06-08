@@ -144,7 +144,7 @@ namespace VetApp.Controllers
             }
 
             var mascota = await _context.Mascotas
-                .Include(m => m.CodClienteNavigation)
+
                 .FirstOrDefaultAsync(m => m.CodMascota == id);
             if (mascota == null)
             {
@@ -163,7 +163,6 @@ namespace VetApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, "No se puede eliminar la mascota ya que tiene registros asociados.");
                 var mascota = await _context.Mascotas
-                    .Include(m => m.CodClienteNavigation)
                     .FirstOrDefaultAsync(m => m.CodMascota == id);
                 return View(mascota);
             }
@@ -178,7 +177,7 @@ namespace VetApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 var mascota = await _context.Mascotas
-                    .Include(m => m.CodClienteNavigation)
+
                     .FirstOrDefaultAsync(m => m.CodMascota == id);
                 return View(mascota);
             }
