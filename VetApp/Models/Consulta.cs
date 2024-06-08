@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace VetApp.Models;
@@ -16,6 +17,6 @@ public partial class Consulta
     public string Tratamiento { get; set; } = null!;
 
     public string Medicacion { get; set; } = null!;
-
+    [ValidateNever]
     public virtual Mascota CodMascotaNavigation { get; set; } = null!;
 }
