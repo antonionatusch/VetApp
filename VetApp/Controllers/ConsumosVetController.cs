@@ -45,7 +45,7 @@ namespace VetApp.Controllers
                 await _context.Database.ExecuteSqlInterpolatedAsync(
                     $"EXEC InsertarConsumoVet {FechaInicio}, {FechaFin}, {CodMascota}, {Observaciones}, {Nit}");
 
-                // Verificar e insertar consultas generales
+
                
 
                 await _context.SaveChangesAsync();

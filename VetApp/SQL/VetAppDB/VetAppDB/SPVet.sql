@@ -786,22 +786,30 @@ BEGIN
     GROUP BY 
         a.codMascota, a.codVacuna;
 
-    -- Insertar consultas
+    -- Insertar consultas generales
     INSERT INTO ConsumosVet (codMascota, codVacuna, idServicio, observaciones, cantVacunas, nit)
     SELECT 
-        cons.codMascota,
+        con.codMascota,
         NULL, -- Sin vacuna en las consultas generales
         'CG000', -- ID del servicio de consultas generales
         @observaciones,
         0, -- Sin vacunas en consultas generales
         @nit
     FROM 
-        Consultas cons
+        Consultas con
+    LEFT JOIN 
+        ConsumosVet c
+    ON 
+        con.codMascota = c.codMascota AND c.idServicio = 'CG000' 
     WHERE 
-        cons.fechaConsulta BETWEEN @fechaInicio AND @fechaFin
-        AND cons.codMascota = @codMascota;
+        con.fechaConsulta BETWEEN @fechaInicio AND @fechaFin
+        AND c.codMascota IS NULL
+        AND con.codMascota = @codMascota
+		AND idServicio IS NULL
+    GROUP BY 
+        con.codMascota, con.fechaConsulta, con.motivo, con.diagnostico, con.tratamiento, con.medicacion;
 END;
-GO
+
 
 
 
@@ -819,7 +827,9 @@ SELECT * FROM ConsumosVet
 
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M002', @observaciones = 'Registro automático', @nit = '0987654321';
-
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M003', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M004', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M005', @observaciones = 'Registro automático', @nit = '0987654321';
 
 */
 
