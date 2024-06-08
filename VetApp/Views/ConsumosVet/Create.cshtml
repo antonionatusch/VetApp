@@ -1,4 +1,4 @@
-﻿@model VetApp.Models.ConsumosVet
+﻿@model VetApp.Models.ConsumosVetCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,26 +13,23 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="FechaInicio" class="control-label"></label>
+                <input asp-for="FechaInicio" class="form-control" type="date" />
+                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaFin" class="control-label"></label>
+                <input asp-for="FechaFin" class="form-control" type="date" />
+                <span asp-validation-for="FechaFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="CodMascota" class="control-label"></label>
                 <select asp-for="CodMascota" class="form-control" asp-items="ViewBag.CodMascota"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CodVacuna" class="control-label"></label>
-                <select asp-for="CodVacuna" class="form-control" asp-items="ViewBag.CodVacuna"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdServicio" class="control-label"></label>
-                <select asp-for="IdServicio" class="form-control" asp-items="ViewBag.IdServicio"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Observaciones" class="control-label"></label>
                 <input asp-for="Observaciones" class="form-control" />
                 <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CantVacunas" class="control-label"></label>
-                <input asp-for="CantVacunas" class="form-control" />
-                <span asp-validation-for="CantVacunas" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Nit" class="control-label"></label>
@@ -55,3 +52,5 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+

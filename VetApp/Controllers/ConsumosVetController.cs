@@ -26,55 +26,31 @@ namespace VetApp.Controllers
                 .Include(c => c.CodVacunaNavigation)
                 .Include(c => c.IdServicioNavigation)
                 .ToListAsync();
+
             return View(consumosVets);
-        }
-
-        // GET: ConsumosVet/Details
-        public async Task<IActionResult> Details(string codMascota, string idServicio, int idConsumoVet)
-        {
-            if (codMascota == null || idServicio == null || idConsumoVet == 0)
-            {
-                return NotFound();
-            }
-
-            var consumosVet = await _context.ConsumosVets
-                .Include(c => c.CodMascotaNavigation)
-                .Include(c => c.CodVacunaNavigation)
-                .Include(c => c.IdServicioNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.IdServicio == idServicio && m.IdConsumoVet == idConsumoVet);
-
-            if (consumosVet == null)
-            {
-                return NotFound();
-            }
-
-            return View(consumosVet);
         }
 
         // GET: ConsumosVet/Create
         public IActionResult Create()
         {
             ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre");
-            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre");
-            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre");
             return View();
         }
 
         // POST: ConsumosVet/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CodMascota,CodVacuna,IdServicio,Observaciones,CantVacunas,Nit")] ConsumosVet consumosVet)
+        public async Task<IActionResult> Create([Bind("FechaInicio,FechaFin,CodMascota,Observaciones,Nit")] ConsumosVetCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(consumosVet);
-                await _context.SaveChangesAsync();
+                await _context.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC InsertarConsumoVet {model.FechaInicio}, {model.FechaFin}, {model.CodMascota}, {model.Observaciones}, {model.Nit}");
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", consumosVet.CodMascota);
-            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre", consumosVet.CodVacuna);
-            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre", consumosVet.IdServicio);
-            return View(consumosVet);
+
+            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", model.CodMascota);
+            return View(model);
         }
 
         // GET: ConsumosVet/Edit
