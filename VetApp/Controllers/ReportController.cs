@@ -24,7 +24,7 @@ namespace VetApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateReport(DateTime fechaInicio, DateTime fechaFin)
+        public async Task<IActionResult> GenerateReport(DateOnly fechaInicio, DateOnly fechaFin)
         {
             var reportResults = new List<ConsumosVetReportViewModel>();
 
@@ -57,12 +57,33 @@ namespace VetApp.Controllers
                             Observaciones = result.GetString(5),
                             CantVacunas = result.GetInt32(6),
                             Nit = result.GetString(7),
-                            Fecha = result.GetDateTime(8),
+                            Fecha = DateOnly.FromDateTime(result.GetDateTime(8)),
                             PrecioTotal = result.GetDecimal(9)
                         });
                     }
                 }
+                var consultas = await _context.Consultas
+                   .Where(c => c.FechaConsulta >= fechaInicio && c.FechaConsulta <= fechaFin)
+                   .ToListAsync();
 
+                foreach (var consulta in consultas)
+                {
+                    reportResults.Add(new ConsumosVetReportViewModel
+                    {
+                        CodMascota = consulta.CodMascota,
+                        NombreMascota = _context.Mascotas.FirstOrDefault(m => m.CodMascota == consulta.CodMascota)?.Nombre,
+                        Cliente = _context.Clientes.FirstOrDefault(c => c.CodCliente == consulta.CodMascotaNavigation.CodCliente)?.Apellido,
+                        IdServicio = "CG000", // ID del servicio de consultas generales
+                        NombreServicio = "ConsultaGeneral",
+                        Observaciones = consulta.Diagnostico,
+                        CantVacunas = 0,
+                        Nit = string.Empty,
+                        Fecha = consulta.FechaConsulta,
+                        PrecioTotal = _context.Servicios.FirstOrDefault(s => s.IdServicio == "CG000")?.Precio ?? 0
+                    });
+                }
+
+                await _context.Database.CloseConnectionAsync();
                 // Obtén el valor del parámetro de salida
                 var resultado = (int)resultadoParam.Value;
                 if (resultado != 1)

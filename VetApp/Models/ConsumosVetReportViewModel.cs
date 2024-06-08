@@ -10,7 +10,7 @@
         public string Observaciones { get; set; }
         public int CantVacunas { get; set; }
         public string Nit { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateOnly Fecha { get; set; }
         public decimal PrecioTotal { get; set; }
     }
 
