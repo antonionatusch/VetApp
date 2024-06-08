@@ -159,6 +159,15 @@ namespace VetApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (HasRelatedRecords(id))
+            {
+                ModelState.AddModelError(string.Empty, "No se puede eliminar la mascota ya que tiene registros asociados.");
+                var mascota = await _context.Mascotas
+                    .Include(m => m.CodClienteNavigation)
+                    .FirstOrDefaultAsync(m => m.CodMascota == id);
+                return View(mascota);
+            }
+
             try
             {
                 _context.DeleteMascota(id);
@@ -168,13 +177,21 @@ namespace VetApp.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
-                return View();
+                var mascota = await _context.Mascotas
+                    .Include(m => m.CodClienteNavigation)
+                    .FirstOrDefaultAsync(m => m.CodMascota == id);
+                return View(mascota);
             }
         }
 
         private bool MascotaExists(string id)
         {
             return _context.Mascotas.Any(e => e.CodMascota == id);
+        }
+
+        private bool HasRelatedRecords(string id)
+        {
+            return _context.ConsumoHotels.Any(ch => ch.CodMascota == id) || _context.ConsumosVets.Any(cv => cv.CodMascota == id);
         }
     }
 }

@@ -696,7 +696,7 @@ public partial class VeterinariaExtendidaContext : DbContext
             new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
             new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
             new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
-            new SqlParameter("@FechaNac", SqlDbType.DateTime) { Value = (object)fechaNac ?? DBNull.Value }
+            new SqlParameter("@FechaNac", SqlDbType.Date) { Value = (object)fechaNac ?? DBNull.Value }
         };
 
         Database.ExecuteSqlRaw("EXEC InsertMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
@@ -712,7 +712,7 @@ public partial class VeterinariaExtendidaContext : DbContext
             new SqlParameter("@Especie", SqlDbType.NVarChar) { Value = especie },
             new SqlParameter("@Raza", SqlDbType.NVarChar) { Value = raza },
             new SqlParameter("@Color", SqlDbType.NVarChar) { Value = color },
-            new SqlParameter("@FechaNac", SqlDbType.DateTime) { Value = (object)fechaNac ?? DBNull.Value }
+            new SqlParameter("@FechaNac", SqlDbType.Date) { Value = (object)fechaNac ?? DBNull.Value }
         };
 
         Database.ExecuteSqlRaw("EXEC UpdateMascota @CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac", parameters);
