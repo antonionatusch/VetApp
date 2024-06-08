@@ -629,3 +629,68 @@ BEGIN
     WHERE CodMascota = @CodMascota;
 END
 GO
+-- Procedimiento almacenado para insertar una nueva consulta
+CREATE PROCEDURE InsertarConsulta
+    @codMascota idFijo,
+    @fechaConsulta fechaObligatoria,
+    @motivo varchar(50),
+    @diagnostico varchar(100),
+    @tratamiento varchar(150),
+    @medicacion varchar(200)
+AS
+BEGIN
+    INSERT INTO Consultas (codMascota, fechaConsulta, motivo, diagnostico, tratamiento, medicacion)
+    VALUES (@codMascota, @fechaConsulta, @motivo, @diagnostico, @tratamiento, @medicacion);
+END;
+GO
+-- Procedimiento almacenado para actualizar una consulta existente
+CREATE PROCEDURE ActualizarConsulta
+    @codMascota idFijo,
+    @fechaConsulta fechaObligatoria,
+    @nuevoMotivo varchar(50),
+    @nuevoDiagnostico varchar(100),
+    @nuevoTratamiento varchar(150),
+    @nuevaMedicacion varchar(200)
+AS
+BEGIN
+    UPDATE Consultas
+    SET motivo = @nuevoMotivo,
+        diagnostico = @nuevoDiagnostico,
+        tratamiento = @nuevoTratamiento,
+        medicacion = @nuevaMedicacion
+    WHERE codMascota = @codMascota AND fechaConsulta = @fechaConsulta;
+END;
+GO
+
+-- Procedimiento almacenado para borrar una consulta existente
+CREATE PROCEDURE BorrarConsulta
+    @codMascota idFijo,
+    @fechaConsulta fechaObligatoria
+AS
+BEGIN
+    DELETE FROM Consultas
+    WHERE codMascota = @codMascota AND fechaConsulta = @fechaConsulta;
+END;
+GO
+
+/* EXEC InsertarConsulta 
+    @codMascota = 'M001',
+    @fechaConsulta = '2024-06-07',
+    @motivo = 'Control de rutina',
+    @diagnostico = 'Buen estado de salud',
+    @tratamiento = 'Vacunación contra la rabia',
+    @medicacion = 'Ninguna';
+
+	EXEC ActualizarConsulta
+    @codMascota = 'M001',
+    @fechaConsulta = '2024-06-07',
+    @nuevoMotivo = 'Dientes amarillos (actualizado)',
+    @nuevoDiagnostico = 'Buen estado de salud (actualizado)',
+    @nuevoTratamiento = 'Vacunación contra la rabia (actualizado)',
+    @nuevaMedicacion = 'Ninguna (actualizado)';
+	
+	EXEC BorrarConsulta
+    @codMascota = 'M001',
+    @fechaConsulta = '2024-06-07';
+	SELECT * FROM Consultas
+*/
