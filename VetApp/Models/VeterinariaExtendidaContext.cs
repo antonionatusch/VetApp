@@ -775,16 +775,6 @@ public partial class VeterinariaExtendidaContext : DbContext
         Database.ExecuteSqlRaw("EXEC BorrarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista",
             codMascotaParam, codVacunaParam, fechaPrevistaParam);
     }
-    public void InsertarConsumoVet(DateOnly fechaInicio, DateOnly fechaFin, string codMascota, string observaciones, string nit)
-    {
-        var fechaInicioParam = new SqlParameter("@fechaInicio", SqlDbType.Date) { Value = fechaInicio };
-        var fechaFinParam = new SqlParameter("@fechaFin", SqlDbType.Date) { Value = fechaFin };
-        var codMascotaParam = new SqlParameter("@codMascota", SqlDbType.NVarChar) { Value = codMascota };
-        var observacionesParam = new SqlParameter("@observaciones", SqlDbType.NVarChar) { Value = observaciones };
-        var nitParam = new SqlParameter("@nit", SqlDbType.NVarChar) { Value = nit };
 
-        Database.ExecuteSqlRaw("EXEC InsertarConsumoVet @fechaInicio, @fechaFin, @codMascota, @observaciones, @nit",
-            fechaInicioParam, fechaFinParam, codMascotaParam, observacionesParam, nitParam);
-    }
 
 }
