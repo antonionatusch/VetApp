@@ -2,6 +2,7 @@
 {
     public class ConsumosVetReportViewModel
     {
+        
         public string CodMascota { get; set; }
         public string NombreMascota { get; set; }
         public string Cliente { get; set; }
