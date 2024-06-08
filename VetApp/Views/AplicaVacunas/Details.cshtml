@@ -37,6 +37,8 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+
+    @Html.ActionLink("Edit", "Edit", new { codMascota = Model.CodMascota, codVacuna = Model.CodVacuna, fechaPrevista = Model.FechaPrevista }) |
+
     <a asp-action="Index">Back to List</a>
 </div>

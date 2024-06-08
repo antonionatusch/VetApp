@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -21,22 +20,24 @@ namespace VetApp.Controllers
         // GET: AplicaVacunas
         public async Task<IActionResult> Index()
         {
-            var veterinariaExtendidaContext = _context.AplicaVacunas.Include(a => a.CodMascotaNavigation).Include(a => a.CodVacunaNavigation);
-            return View(await veterinariaExtendidaContext.ToListAsync());
+            var aplicaVacunas = _context.AplicaVacunas
+                .Include(av => av.CodMascotaNavigation)
+                .Include(av => av.CodVacunaNavigation);
+            return View(await aplicaVacunas.ToListAsync());
         }
 
-        // GET: AplicaVacunas/Details/5
-        public async Task<IActionResult> Details(string id)
+        // GET: AplicaVacunas/Details
+        public async Task<IActionResult> Details(string codMascota, string codVacuna, DateOnly fechaPrevista)
         {
-            if (id == null)
+            if (codMascota == null || codVacuna == null)
             {
                 return NotFound();
             }
 
             var aplicaVacuna = await _context.AplicaVacunas
-                .Include(a => a.CodMascotaNavigation)
-                .Include(a => a.CodVacunaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == id);
+                .Include(av => av.CodMascotaNavigation)
+                .Include(av => av.CodVacunaNavigation)
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.CodVacuna == codVacuna && m.FechaPrevista == fechaPrevista);
             if (aplicaVacuna == null)
             {
                 return NotFound();
@@ -54,8 +55,6 @@ namespace VetApp.Controllers
         }
 
         // POST: AplicaVacunas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CodMascota,CodVacuna,FechaPrevista,FechaAplicacion,DosisAplicada")] AplicaVacuna aplicaVacuna)
@@ -71,15 +70,15 @@ namespace VetApp.Controllers
             return View(aplicaVacuna);
         }
 
-        // GET: AplicaVacunas/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        // GET: AplicaVacunas/Edit
+        public async Task<IActionResult> Edit(string codMascota, string codVacuna, DateOnly fechaPrevista)
         {
-            if (id == null)
+            if (codMascota == null || codVacuna == null)
             {
                 return NotFound();
             }
 
-            var aplicaVacuna = await _context.AplicaVacunas.FindAsync(id);
+            var aplicaVacuna = await _context.AplicaVacunas.FindAsync(codMascota, codVacuna, fechaPrevista);
             if (aplicaVacuna == null)
             {
                 return NotFound();
@@ -89,14 +88,12 @@ namespace VetApp.Controllers
             return View(aplicaVacuna);
         }
 
-        // POST: AplicaVacunas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: AplicaVacunas/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CodMascota,CodVacuna,FechaPrevista,FechaAplicacion,DosisAplicada")] AplicaVacuna aplicaVacuna)
+        public async Task<IActionResult> Edit(string codMascota, string codVacuna, DateOnly fechaPrevista, [Bind("CodMascota,CodVacuna,FechaPrevista,FechaAplicacion,DosisAplicada")] AplicaVacuna aplicaVacuna)
         {
-            if (id != aplicaVacuna.CodMascota)
+            if (codMascota != aplicaVacuna.CodMascota || codVacuna != aplicaVacuna.CodVacuna || fechaPrevista != aplicaVacuna.FechaPrevista)
             {
                 return NotFound();
             }
@@ -110,7 +107,7 @@ namespace VetApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AplicaVacunaExists(aplicaVacuna.CodMascota))
+                    if (!AplicaVacunaExists(aplicaVacuna.CodMascota, aplicaVacuna.CodVacuna, aplicaVacuna.FechaPrevista))
                     {
                         return NotFound();
                     }
@@ -126,18 +123,18 @@ namespace VetApp.Controllers
             return View(aplicaVacuna);
         }
 
-        // GET: AplicaVacunas/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        // GET: AplicaVacunas/Delete
+        public async Task<IActionResult> Delete(string codMascota, string codVacuna, DateOnly fechaPrevista)
         {
-            if (id == null)
+            if (codMascota == null || codVacuna == null)
             {
                 return NotFound();
             }
 
             var aplicaVacuna = await _context.AplicaVacunas
-                .Include(a => a.CodMascotaNavigation)
-                .Include(a => a.CodVacunaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == id);
+                .Include(av => av.CodMascotaNavigation)
+                .Include(av => av.CodVacunaNavigation)
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.CodVacuna == codVacuna && m.FechaPrevista == fechaPrevista);
             if (aplicaVacuna == null)
             {
                 return NotFound();
@@ -146,24 +143,23 @@ namespace VetApp.Controllers
             return View(aplicaVacuna);
         }
 
-        // POST: AplicaVacunas/Delete/5
+        // POST: AplicaVacunas/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string codMascota, string codVacuna, DateOnly fechaPrevista)
         {
-            var aplicaVacuna = await _context.AplicaVacunas.FindAsync(id);
+            var aplicaVacuna = await _context.AplicaVacunas.FindAsync(codMascota, codVacuna, fechaPrevista);
             if (aplicaVacuna != null)
             {
                 _context.AplicaVacunas.Remove(aplicaVacuna);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AplicaVacunaExists(string id)
+        private bool AplicaVacunaExists(string codMascota, string codVacuna, DateOnly fechaPrevista)
         {
-            return _context.AplicaVacunas.Any(e => e.CodMascota == id);
+            return _context.AplicaVacunas.Any(e => e.CodMascota == codMascota && e.CodVacuna == codVacuna && e.FechaPrevista == fechaPrevista);
         }
     }
 }

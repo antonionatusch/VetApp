@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace VetApp.Models;
@@ -14,8 +15,8 @@ public partial class AplicaVacuna
     public DateOnly? FechaAplicacion { get; set; }
 
     public int DosisAplicada { get; set; }
-
+    [ValidateNever]
     public virtual Mascota CodMascotaNavigation { get; set; } = null!;
-
+    [ValidateNever]
     public virtual Vacuna CodVacunaNavigation { get; set; } = null!;
 }
