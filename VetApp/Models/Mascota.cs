@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace VetApp.Models;
@@ -20,7 +21,7 @@ public partial class Mascota
     public DateOnly? FechaNac { get; set; }
 
     public virtual ICollection<AplicaVacuna> AplicaVacunas { get; set; } = new List<AplicaVacuna>();
-
+    [ValidateNever]
     public virtual Cliente CodClienteNavigation { get; set; } = null!;
 
     public virtual ICollection<Consulta> Consulta { get; set; } = new List<Consulta>();

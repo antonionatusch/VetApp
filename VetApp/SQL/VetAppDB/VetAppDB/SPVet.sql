@@ -525,3 +525,107 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE InsertMascota
+    @CodMascota VARCHAR(20),
+    @CodCliente VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Especie VARCHAR(30),
+    @Raza VARCHAR(30),
+    @Color VARCHAR(20),
+    @FechaNac DATE
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodMascota) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codMascota, ';
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Especie) > 30
+        SET @ErrorMessages = @ErrorMessages + 'especie, ';
+    IF LEN(@Raza) > 30
+        SET @ErrorMessages = @ErrorMessages + 'raza, ';
+    IF LEN(@Color) > 20
+        SET @ErrorMessages = @ErrorMessages + 'color, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota ya está registrada.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO Mascotas (CodMascota, CodCliente, Nombre, Especie, Raza, Color, FechaNac)
+    VALUES (@CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac);
+END
+GO
+
+CREATE PROCEDURE UpdateMascota
+    @CodMascota VARCHAR(20),
+    @CodCliente VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Especie VARCHAR(30),
+    @Raza VARCHAR(30),
+    @Color VARCHAR(20),
+    @FechaNac DATE
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodMascota) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codMascota, ';
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Especie) > 30
+        SET @ErrorMessages = @ErrorMessages + 'especie, ';
+    IF LEN(@Raza) > 30
+        SET @ErrorMessages = @ErrorMessages + 'raza, ';
+    IF LEN(@Color) > 20
+        SET @ErrorMessages = @ErrorMessages + 'color, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE Mascotas
+    SET CodCliente = @CodCliente,
+        Nombre = @Nombre,
+        Especie = @Especie,
+        Raza = @Raza,
+        Color = @Color,
+        FechaNac = @FechaNac
+    WHERE CodMascota = @CodMascota;
+END
+GO
+
+CREATE PROCEDURE DeleteMascota
+    @CodMascota VARCHAR(20)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM Mascotas
+    WHERE CodMascota = @CodMascota;
+END
+GO
