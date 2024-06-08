@@ -158,4 +158,474 @@ SELECT @resultado AS Resultado;
 
 
 */
+-- insercion asociacion
 
+CREATE PROCEDURE PersonaCliente_Insert
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20),
+    @FechaAsociacion date
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM PersonaCliente WHERE CodCliente = @CodCliente AND Ci = @Ci)
+    BEGIN
+        INSERT INTO PersonaCliente (CodCliente, Ci, FechaAsociacion)
+        VALUES (@CodCliente, @Ci, @FechaAsociacion);
+    END
+    ELSE
+    BEGIN
+        RAISERROR('La asociación ya existe.', 16, 1);
+    END
+END
+
+SELECT * FROM Personas
+SELECT * FROM Clientes
+SELECT * FROM PersonaCliente
+/*
+-- Inserta una nueva asociación
+EXEC PersonaCliente_Insert @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-06-07';
+*/
+
+CREATE PROCEDURE PersonaCliente_Update
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20),
+    @FechaAsociacion date
+AS
+BEGIN
+    UPDATE PersonaCliente
+    SET FechaAsociacion = @FechaAsociacion
+    WHERE CodCliente = @CodCliente AND Ci = @Ci;
+END
+
+SELECT * FROM PersonaCliente
+/*
+-- Actualiza la fecha de asociación
+EXEC PersonaCliente_Update @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-07-01';
+*/
+
+CREATE PROCEDURE PersonaCliente_Delete
+    @CodCliente nvarchar(20),
+    @Ci nvarchar(20)
+AS
+BEGIN
+    DELETE FROM PersonaCliente
+    WHERE CodCliente = @CodCliente AND Ci = @Ci;
+END
+
+/*
+-- Elimina la asociación
+EXEC PersonaCliente_Delete @CodCliente = 'C001', @Ci = '23232';
+*/
+
+
+CREATE PROCEDURE InsertPersona
+    @Ci VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Direccion VARCHAR(60)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Personas WHERE ci = @Ci)
+    BEGIN
+        RAISERROR('La persona ya está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@Ci) > 20
+        SET @ErrorMessages = @ErrorMessages + 'ci, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        RAISERROR(@ErrorMessages, 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO Personas (ci, nombre, telefono, correo, direccion)
+    VALUES (@Ci, @Nombre, @Telefono, @Correo, @Direccion);
+END
+GO
+
+CREATE PROCEDURE UpdatePersona
+    @Ci VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Direccion VARCHAR(60)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@Ci) > 20
+        SET @ErrorMessages = @ErrorMessages + 'ci, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM Personas WHERE Ci = @Ci)
+    BEGIN
+        RAISERROR('La persona no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE Personas
+    SET Nombre = @Nombre,
+        Telefono = @Telefono,
+        Correo = @Correo,
+        Direccion = @Direccion
+    WHERE Ci = @Ci;
+END
+
+
+
+CREATE PROCEDURE DeletePersona
+    @Ci VARCHAR(20)
+AS
+BEGIN
+    DELETE FROM Personas
+    WHERE ci = @Ci;
+END
+
+-- Vacunas
+
+CREATE PROCEDURE InsertVacuna
+    @CodVacuna VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Laboratorio VARCHAR(80),
+    @PrevEnfermedad VARCHAR(50),
+    @Dosis DECIMAL(5, 2),
+    @PrecioUnitario DECIMAL(5, 2)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna ya está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodVacuna) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codVacuna, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Laboratorio) > 80
+        SET @ErrorMessages = @ErrorMessages + 'laboratorio, ';
+    IF LEN(@PrevEnfermedad) > 50
+        SET @ErrorMessages = @ErrorMessages + 'prevEnfermedad, ';
+    IF @Dosis > 999.99
+        SET @ErrorMessages = @ErrorMessages + 'dosis, ';
+    IF @PrecioUnitario > 999.99
+        SET @ErrorMessages = @ErrorMessages + 'precioUnitario, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    INSERT INTO Vacunas (CodVacuna, Nombre, Laboratorio, PrevEnfermedad, Dosis, PrecioUnitario)
+    VALUES (@CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario);
+END
+
+
+CREATE PROCEDURE UpdateVacuna
+    @CodVacuna VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Laboratorio VARCHAR(80),
+    @PrevEnfermedad VARCHAR(50),
+    @Dosis DECIMAL(5, 2),
+    @PrecioUnitario MONEY
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodVacuna) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codVacuna, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Laboratorio) > 80
+        SET @ErrorMessages = @ErrorMessages + 'laboratorio, ';
+    IF LEN(@PrevEnfermedad) > 50
+        SET @ErrorMessages = @ErrorMessages + 'prevEnfermedad, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE Vacunas
+    SET Nombre = @Nombre,
+        Dosis = @Dosis,
+        Laboratorio = @Laboratorio,
+        PrecioUnitario = @PrecioUnitario,
+        PrevEnfermedad = @PrevEnfermedad
+    WHERE CodVacuna = @CodVacuna;
+END
+GO
+
+CREATE PROCEDURE DeleteVacuna
+    @CodVacuna VARCHAR(20)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM Vacunas
+    WHERE CodVacuna = @CodVacuna;
+END
+GO
+
+
+/*
+
+SELECT * FROM Personas
+
+-- Insertar en Personas
+EXEC InsertPersona '1234567891', 'Juan Pérez', '1234567890', 'juan@example.com', '123 Calle Falsa';
+
+-- Actualizar en Personas
+EXEC UpdatePersona '1234567891', 'Juan Pérez Actualizado', '0987654321', 'juan_actualizado@example.com', '456 Calle Verdadera';
+
+-- Eliminar en Personas
+EXEC DeletePersona '1234567891';
+
+-- Insertar en Clientes
+EXEC InsertCliente 'C123', 'Pérez', 'Juan', 'Banco XYZ', 'juan@example.com', '123456789', '123 Calle Falsa', '1234567890';
+
+-- Actualizar en Clientes
+EXEC UpdateCliente 'C123', 'Pérez Actualizado', 'Juan Actualizado', 'Banco ABC', 'juan_actualizado@example.com', '987654321', '456 Calle Verdadera', '0987654321';
+
+-- Eliminar en Clientes
+EXEC DeleteCliente 'C123';
+
+
+*/
+-- clientes
+
+CREATE PROCEDURE InsertCliente
+    @CodCliente VARCHAR(20),
+    @Apellido VARCHAR(80),
+    @Banco VARCHAR(80),
+    @Correo VARCHAR(50),
+    @CuentaBanco VARCHAR(40),
+    @Direccion VARCHAR(60),
+    @Telefono VARCHAR(50)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Apellido) > 80
+        SET @ErrorMessages = @ErrorMessages + 'apellido, ';
+    IF LEN(@Banco) > 80
+        SET @ErrorMessages = @ErrorMessages + 'banco, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@CuentaBanco) > 40
+        SET @ErrorMessages = @ErrorMessages + 'cuentaBanco, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    INSERT INTO Clientes (codCliente, apellido, banco, correo, cuentaBanco, direccion, telefono)
+    VALUES (@CodCliente, @Apellido, @Banco, @Correo, @CuentaBanco, @Direccion, @Telefono);
+END
+GO
+
+CREATE PROCEDURE UpdateCliente
+    @CodCliente VARCHAR(20),
+    @Apellido VARCHAR(80),
+    @Banco VARCHAR(80),
+    @Correo VARCHAR(50),
+    @CuentaBanco VARCHAR(40),
+    @Direccion VARCHAR(60),
+    @Telefono VARCHAR(50)
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Apellido) > 80
+        SET @ErrorMessages = @ErrorMessages + 'apellido, ';
+    IF LEN(@Banco) > 80
+        SET @ErrorMessages = @ErrorMessages + 'banco, ';
+    IF LEN(@Correo) > 50
+        SET @ErrorMessages = @ErrorMessages + 'correo, ';
+    IF LEN(@CuentaBanco) > 40
+        SET @ErrorMessages = @ErrorMessages + 'cuentaBanco, ';
+    IF LEN(@Direccion) > 60
+        SET @ErrorMessages = @ErrorMessages + 'direccion, ';
+    IF LEN(@Telefono) > 50
+        SET @ErrorMessages = @ErrorMessages + 'telefono, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    UPDATE Clientes
+    SET apellido = @Apellido,
+        banco = @Banco,
+        correo = @Correo,
+        cuentaBanco = @CuentaBanco,
+        direccion = @Direccion,
+        telefono = @Telefono
+    WHERE codCliente = @CodCliente;
+END
+GO
+
+CREATE PROCEDURE DeleteCliente
+    @CodCliente VARCHAR(20)
+AS
+BEGIN
+    DELETE FROM Clientes
+    WHERE codCliente = @CodCliente;
+END
+GO
+
+CREATE PROCEDURE InsertMascota
+    @CodMascota VARCHAR(20),
+    @CodCliente VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Especie VARCHAR(30),
+    @Raza VARCHAR(30),
+    @Color VARCHAR(20),
+    @FechaNac DATE
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodMascota) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codMascota, ';
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Especie) > 30
+        SET @ErrorMessages = @ErrorMessages + 'especie, ';
+    IF LEN(@Raza) > 30
+        SET @ErrorMessages = @ErrorMessages + 'raza, ';
+    IF LEN(@Color) > 20
+        SET @ErrorMessages = @ErrorMessages + 'color, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota ya está registrada.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO Mascotas (CodMascota, CodCliente, Nombre, Especie, Raza, Color, FechaNac)
+    VALUES (@CodMascota, @CodCliente, @Nombre, @Especie, @Raza, @Color, @FechaNac);
+END
+GO
+
+CREATE PROCEDURE UpdateMascota
+    @CodMascota VARCHAR(20),
+    @CodCliente VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Especie VARCHAR(30),
+    @Raza VARCHAR(30),
+    @Color VARCHAR(20),
+    @FechaNac DATE
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodMascota) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codMascota, ';
+    IF LEN(@CodCliente) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codCliente, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Especie) > 30
+        SET @ErrorMessages = @ErrorMessages + 'especie, ';
+    IF LEN(@Raza) > 30
+        SET @ErrorMessages = @ErrorMessages + 'raza, ';
+    IF LEN(@Color) > 20
+        SET @ErrorMessages = @ErrorMessages + 'color, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE Mascotas
+    SET CodCliente = @CodCliente,
+        Nombre = @Nombre,
+        Especie = @Especie,
+        Raza = @Raza,
+        Color = @Color,
+        FechaNac = @FechaNac
+    WHERE CodMascota = @CodMascota;
+END
+GO
+
+CREATE PROCEDURE DeleteMascota
+    @CodMascota VARCHAR(20)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM Mascotas WHERE CodMascota = @CodMascota)
+    BEGIN
+        RAISERROR('La mascota no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM Mascotas
+    WHERE CodMascota = @CodMascota;
+END
+GO
