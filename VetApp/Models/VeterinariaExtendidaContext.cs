@@ -649,4 +649,41 @@ public partial class VeterinariaExtendidaContext : DbContext
         Database.ExecuteSqlRaw("EXEC DeleteCliente @CodCliente", codClienteParam);
     }
 
+    public void InsertVacuna(string codVacuna, string nombre, string laboratorio, string prevEnfermedad, decimal dosis, decimal precioUnitario)
+    {
+        var parameters = new[]
+        {
+                new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna },
+                new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+                new SqlParameter("@Laboratorio", SqlDbType.NVarChar) { Value = laboratorio },
+                new SqlParameter("@PrevEnfermedad", SqlDbType.NVarChar) { Value = prevEnfermedad },
+                new SqlParameter("@Dosis", SqlDbType.Decimal) { Value = dosis },
+                new SqlParameter("@PrecioUnitario", SqlDbType.Decimal) { Value = precioUnitario }
+            };
+
+        Database.ExecuteSqlRaw("EXEC InsertVacuna @CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario", parameters);
+    }
+
+    public void UpdateVacuna(string codVacuna, string nombre, string laboratorio, string prevEnfermedad, decimal dosis, decimal precioUnitario)
+    {
+        var parameters = new[]
+        {
+                new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna },
+                new SqlParameter("@Nombre", SqlDbType.NVarChar) { Value = nombre },
+                new SqlParameter("@Laboratorio", SqlDbType.NVarChar) { Value = laboratorio },
+                new SqlParameter("@PrevEnfermedad", SqlDbType.NVarChar) { Value = prevEnfermedad },
+                new SqlParameter("@Dosis", SqlDbType.Decimal) { Value = dosis },
+                new SqlParameter("@PrecioUnitario", SqlDbType.Decimal) { Value = precioUnitario }
+            };
+
+        Database.ExecuteSqlRaw("EXEC UpdateVacuna @CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario", parameters);
+    }
+
+    public void DeleteVacuna(string codVacuna)
+    {
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+
+        Database.ExecuteSqlRaw("EXEC DeleteVacuna @CodVacuna", codVacunaParam);
+    }
+
 }

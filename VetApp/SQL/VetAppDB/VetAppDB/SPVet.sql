@@ -225,6 +225,12 @@ CREATE PROCEDURE InsertPersona
     @Direccion VARCHAR(60)
 AS
 BEGIN
+    IF EXISTS (SELECT 1 FROM Personas WHERE ci = @Ci)
+    BEGIN
+        RAISERROR('La persona ya está registrada.', 16, 1);
+        RETURN;
+    END
+
     DECLARE @ErrorMessages NVARCHAR(MAX) = '';
 
     IF LEN(@Ci) > 20
@@ -241,13 +247,14 @@ BEGIN
     IF @ErrorMessages <> ''
     BEGIN
         SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
-        THROW 50000, @ErrorMessages, 1;
+        RAISERROR(@ErrorMessages, 16, 1);
+        RETURN;
     END
 
     INSERT INTO Personas (ci, nombre, telefono, correo, direccion)
     VALUES (@Ci, @Nombre, @Telefono, @Correo, @Direccion);
 END
-
+GO
 
 CREATE PROCEDURE UpdatePersona
     @Ci VARCHAR(20),
@@ -276,14 +283,21 @@ BEGIN
         THROW 50000, @ErrorMessages, 1;
     END
 
+    IF NOT EXISTS (SELECT 1 FROM Personas WHERE Ci = @Ci)
+    BEGIN
+        RAISERROR('La persona no está registrada.', 16, 1);
+        RETURN;
+    END
+
     UPDATE Personas
-    SET nombre = @Nombre,
-        telefono = @Telefono,
-        correo = @Correo,
-        direccion = @Direccion
-    WHERE ci = @Ci;
+    SET Nombre = @Nombre,
+        Telefono = @Telefono,
+        Correo = @Correo,
+        Direccion = @Direccion
+    WHERE Ci = @Ci;
 END
-GO
+
+
 
 CREATE PROCEDURE DeletePersona
     @Ci VARCHAR(20)
@@ -292,6 +306,106 @@ BEGIN
     DELETE FROM Personas
     WHERE ci = @Ci;
 END
+
+-- Vacunas
+
+CREATE PROCEDURE InsertVacuna
+    @CodVacuna VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Laboratorio VARCHAR(80),
+    @PrevEnfermedad VARCHAR(50),
+    @Dosis DECIMAL(5, 2),
+    @PrecioUnitario DECIMAL(5, 2)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna ya está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodVacuna) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codVacuna, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Laboratorio) > 80
+        SET @ErrorMessages = @ErrorMessages + 'laboratorio, ';
+    IF LEN(@PrevEnfermedad) > 50
+        SET @ErrorMessages = @ErrorMessages + 'prevEnfermedad, ';
+    IF @Dosis > 999.99
+        SET @ErrorMessages = @ErrorMessages + 'dosis, ';
+    IF @PrecioUnitario > 999.99
+        SET @ErrorMessages = @ErrorMessages + 'precioUnitario, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    INSERT INTO Vacunas (CodVacuna, Nombre, Laboratorio, PrevEnfermedad, Dosis, PrecioUnitario)
+    VALUES (@CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario);
+END
+
+
+CREATE PROCEDURE UpdateVacuna
+    @CodVacuna VARCHAR(20),
+    @Nombre VARCHAR(80),
+    @Laboratorio VARCHAR(80),
+    @PrevEnfermedad VARCHAR(50),
+    @Dosis DECIMAL(5, 2),
+    @PrecioUnitario MONEY
+AS
+BEGIN
+    DECLARE @ErrorMessages NVARCHAR(MAX) = '';
+
+    IF LEN(@CodVacuna) > 20
+        SET @ErrorMessages = @ErrorMessages + 'codVacuna, ';
+    IF LEN(@Nombre) > 80
+        SET @ErrorMessages = @ErrorMessages + 'nombre, ';
+    IF LEN(@Laboratorio) > 80
+        SET @ErrorMessages = @ErrorMessages + 'laboratorio, ';
+    IF LEN(@PrevEnfermedad) > 50
+        SET @ErrorMessages = @ErrorMessages + 'prevEnfermedad, ';
+
+    IF @ErrorMessages <> ''
+    BEGIN
+        SET @ErrorMessages = 'Los campos ' + LEFT(@ErrorMessages, LEN(@ErrorMessages) - 2) + ' se excedieron.';
+        THROW 50000, @ErrorMessages, 1;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE Vacunas
+    SET Nombre = @Nombre,
+        Dosis = @Dosis,
+        Laboratorio = @Laboratorio,
+        PrecioUnitario = @PrecioUnitario,
+        PrevEnfermedad = @PrevEnfermedad
+    WHERE CodVacuna = @CodVacuna;
+END
+GO
+
+CREATE PROCEDURE DeleteVacuna
+    @CodVacuna VARCHAR(20)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM Vacunas WHERE CodVacuna = @CodVacuna)
+    BEGIN
+        RAISERROR('La vacuna no está registrada.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM Vacunas
+    WHERE CodVacuna = @CodVacuna;
+END
+GO
 
 
 /*

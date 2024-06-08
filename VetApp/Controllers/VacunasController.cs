@@ -8,22 +8,22 @@ using VetApp.Models;
 
 namespace VetApp.Controllers
 {
-    public class PersonasController : Controller
+    public class VacunasController : Controller
     {
         private readonly VeterinariaExtendidaContext _context;
 
-        public PersonasController(VeterinariaExtendidaContext context)
+        public VacunasController(VeterinariaExtendidaContext context)
         {
             _context = context;
         }
 
-        // GET: Personas
+        // GET: Vacunas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Personas.ToListAsync());
+            return View(await _context.Vacunas.ToListAsync());
         }
 
-        // GET: Personas/Details/5
+        // GET: Vacunas/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -31,47 +31,48 @@ namespace VetApp.Controllers
                 return NotFound();
             }
 
-            var persona = await _context.Personas
-                .FirstOrDefaultAsync(m => m.Ci == id);
-            if (persona == null)
+            var vacuna = await _context.Vacunas
+                .FirstOrDefaultAsync(m => m.CodVacuna == id);
+            if (vacuna == null)
             {
                 return NotFound();
             }
 
-            return View(persona);
+            return View(vacuna);
         }
 
-        // GET: Personas/Create
+        // GET: Vacunas/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Personas/Create
+        // POST: Vacunas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Ci,Nombre,Telefono,Correo,Direccion")] Persona persona)
+        public async Task<IActionResult> Create([Bind("CodVacuna,Nombre,Laboratorio,PrevEnfermedad,Dosis,PrecioUnitario")] Vacuna vacuna)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.InsertPersona(persona.Ci, persona.Nombre, persona.Telefono, persona.Correo, persona.Direccion);
+                    _context.InsertVacuna(vacuna.CodVacuna, vacuna.Nombre, vacuna.Laboratorio, vacuna.PrevEnfermedad, vacuna.Dosis, vacuna.PrecioUnitario);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (SqlException ex) when (ex.Number == 50000)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
-                catch (Exception ex)
+                catch (DbUpdateException)
                 {
-                    ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
                 }
             }
-            return View(persona);
+            return View(vacuna);
         }
 
-        // GET: Personas/Edit/5
+        // GET: Vacunas/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -79,20 +80,20 @@ namespace VetApp.Controllers
                 return NotFound();
             }
 
-            var persona = await _context.Personas.FindAsync(id);
-            if (persona == null)
+            var vacuna = await _context.Vacunas.FindAsync(id);
+            if (vacuna == null)
             {
                 return NotFound();
             }
-            return View(persona);
+            return View(vacuna);
         }
 
-        // POST: Personas/Edit/5
+        // POST: Vacunas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Ci,Nombre,Telefono,Correo,Direccion")] Persona persona)
+        public async Task<IActionResult> Edit(string id, [Bind("CodVacuna,Nombre,Laboratorio,PrevEnfermedad,Dosis,PrecioUnitario")] Vacuna vacuna)
         {
-            if (id != persona.Ci)
+            if (id != vacuna.CodVacuna)
             {
                 return NotFound();
             }
@@ -101,22 +102,23 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    _context.UpdatePersona(persona.Ci, persona.Nombre, persona.Telefono, persona.Correo, persona.Direccion);
+                    _context.UpdateVacuna(vacuna.CodVacuna, vacuna.Nombre, vacuna.Laboratorio, vacuna.PrevEnfermedad, vacuna.Dosis, vacuna.PrecioUnitario);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (SqlException ex) when (ex.Number == 50000)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
-                catch (Exception ex)
+                catch (DbUpdateException)
                 {
-                    ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, "An error occurred while saving data.");
                 }
             }
-            return View(persona);
+            return View(vacuna);
         }
 
-        // GET: Personas/Delete/5
+        // GET: Vacunas/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -124,36 +126,37 @@ namespace VetApp.Controllers
                 return NotFound();
             }
 
-            var persona = await _context.Personas
-                .FirstOrDefaultAsync(m => m.Ci == id);
-            if (persona == null)
+            var vacuna = await _context.Vacunas
+                .FirstOrDefaultAsync(m => m.CodVacuna == id);
+            if (vacuna == null)
             {
                 return NotFound();
             }
 
-            return View(persona);
+            return View(vacuna);
         }
 
-        // POST: Personas/Delete/5
+        // POST: Vacunas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             try
             {
-                _context.DeletePersona(id);
+                _context.DeleteVacuna(id);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 return View();
             }
         }
 
-        private bool PersonaExists(string id)
+        private bool VacunaExists(string id)
         {
-            return _context.Personas.Any(e => e.Ci == id);
+            return _context.Vacunas.Any(e => e.CodVacuna == id);
         }
     }
 }
