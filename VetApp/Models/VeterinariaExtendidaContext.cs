@@ -199,6 +199,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasConstraintName("FK_MascConsultas");
         });
 
+
         modelBuilder.Entity<ConsumoHotel>(entity =>
         {
             entity.HasKey(e => new { e.IdHospedaje, e.IdServicio, e.CodMascota });
@@ -344,9 +345,15 @@ public partial class VeterinariaExtendidaContext : DbContext
 
         modelBuilder.Entity<Hospedaje>(entity =>
         {
-            entity.HasKey(e => e.IdHospedaje).HasName("PK_idHospedaje");
+            entity.HasKey(e => new { e.IdHospedaje, e.CodMascota }).HasName("PK_idHospedaje");
 
-            entity.Property(e => e.IdHospedaje).HasColumnName("idHospedaje");
+            entity.Property(e => e.IdHospedaje)
+                .HasColumnName("idHospedaje");
+            entity.Property(e => e.CodMascota)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMascota");
             entity.Property(e => e.FechaIngreso)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("fechaIngreso");
@@ -357,7 +364,14 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("observaciones");
+
+            entity.HasOne(d => d.CodMascotaNavigation)
+                .WithMany(p => p.Hospedajes)
+                .HasForeignKey(d => d.CodMascota)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MasHosp");
         });
+
 
         modelBuilder.Entity<Mascota>(entity =>
         {
