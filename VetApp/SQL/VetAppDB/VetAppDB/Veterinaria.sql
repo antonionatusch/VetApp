@@ -73,10 +73,12 @@ CREATE TABLE Hospedajes
 (
 
 	idHospedaje		INT IDENTITY (1,1) not null,
+	codMascota		idFijo,
 	fechaIngreso	fechaObligatoria DEFAULT GETDATE(),
 	fechaSalida		date DEFAULT GETDATE(),
 	observaciones	varchar(150) not null,
-	CONSTRAINT PK_idHospedaje PRIMARY KEY (idHospedaje)
+	CONSTRAINT PK_idHospedaje PRIMARY KEY (idHospedaje, codMascota),
+	CONSTRAINT FK_MasHosp FOREIGN KEY (codMascota) REFERENCES Mascotas
 
 );
 
@@ -221,14 +223,12 @@ CREATE TABLE ConsumoHotel
 	cantidadMedic	int NOT NULL DEFAULT 0,
 	cantidadCom		int NOT NULL DEFAULT 0,
 	CONSTRAINT PK_ConsumoHotel PRIMARY KEY (idHospedaje, idServicio, codMascota),
-	CONSTRAINT FK_HospedajeCH FOREIGN KEY (idHospedaje) REFERENCES Hospedajes,
+	CONSTRAINT FK_HospedajeCH FOREIGN KEY (idHospedaje, codMascota) REFERENCES Hospedajes(idHospedaje, codMascota),
 	CONSTRAINT FK_ServiciosCH FOREIGN KEY (idServicio) REFERENCES Servicios,
 	CONSTRAINT FK_MascCH FOREIGN KEY (codMascota) REFERENCES Mascotas,
 	CONSTRAINT FK_AlimCH FOREIGN KEY (codAlimento) REFERENCES Alimentos,
 	CONSTRAINT FK_MedicCH FOREIGN KEY (codMedicamento) REFERENCES Medicamentos,
 	CONSTRAINT FK_ComodCH FOREIGN KEY (idComodidad) REFERENCES Comodidades,
 	
-
-
 );
 
