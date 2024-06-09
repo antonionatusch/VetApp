@@ -216,6 +216,7 @@ CREATE TABLE ConsumoHotel
 	idComodidad		char(20),
 	NIT				varchar(20) NOT NULL,
 	observaciones	varchar(150) NOT NULL,
+	nochesHosp		int not null DEFAULT 1,
 	cantidadAlim	int NOT NULL DEFAULT 0,
 	cantidadMedic	int NOT NULL DEFAULT 0,
 	cantidadCom		int NOT NULL DEFAULT 0,

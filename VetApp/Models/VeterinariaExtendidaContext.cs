@@ -242,6 +242,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("observaciones");
+            entity.Property(e => e.NochesHosp).HasColumnName("nochesHosp");
 
             entity.HasOne(d => d.CodAlimentoNavigation).WithMany(p => p.ConsumoHotels)
                 .HasForeignKey(d => d.CodAlimento)

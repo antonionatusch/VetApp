@@ -20,7 +20,7 @@ public partial class ConsumoHotel
     public string Nit { get; set; } = null!;
 
     public string Observaciones { get; set; } = null!;
-
+    public int NochesHosp { get; set; }
     public int CantidadAlim { get; set; }
 
     public int CantidadMedic { get; set; }
