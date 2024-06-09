@@ -133,58 +133,44 @@ BEGIN
                     ELSE 
                         0
                 END
-                + ISNULL(a.totalAlimento, 0) -- Suma de los precios de los alimentos consumidos
-                + ISNULL(co.totalComodidad, 0) -- Suma de los precios de las comodidades consumidas
-                + ISNULL(me.totalMedicamento, 0) -- Suma de los precios de los medicamentos consumidos
+                + ISNULL((
+                    SELECT a.precioUnitario * ch.cantidadAlim
+                    FROM Alimentos a
+                    WHERE a.codAlimento = ch.codAlimento
+                ), 0) -- Precio del alimento consumido
+                + ISNULL((
+                    SELECT co.precioUnitario * ch.cantidadCom
+                    FROM Comodidades co
+                    WHERE co.idComodidad = ch.idComodidad
+                ), 0) -- Precio de la comodidad consumida
+                + ISNULL((
+                    SELECT me.precioUnitario * ch.cantidadMedic
+                    FROM Medicamentos me
+                    WHERE me.codMedicamento = ch.codMedicamento
+                ), 0) -- Precio del medicamento consumido
             ) AS precioTotal
+        INTO #tempReport
         FROM 
             ConsumoHotel ch
             JOIN Mascotas m ON ch.codMascota = m.codMascota
             JOIN Clientes c ON m.codCliente = c.codCliente
             JOIN Servicios s ON ch.idServicio = s.idServicio
             JOIN Hospedajes h ON ch.idHospedaje = h.idHospedaje AND ch.codMascota = h.codMascota
-            LEFT JOIN (
-                SELECT 
-                    ch.codMascota,
-                    SUM(a.precioUnitario * ch.cantidadAlim) AS totalAlimento
-                FROM 
-                    ConsumoHotel ch
-                    JOIN Alimentos a ON ch.codAlimento = a.codAlimento
-                GROUP BY 
-                    ch.codMascota
-            ) a ON ch.codMascota = a.codMascota
-            LEFT JOIN (
-                SELECT 
-                    ch.codMascota,
-                    SUM(co.precioUnitario * ch.cantidadCom) AS totalComodidad
-                FROM 
-                    ConsumoHotel ch
-                    JOIN Comodidades co ON ch.idComodidad = co.idComodidad
-                GROUP BY 
-                    ch.codMascota
-            ) co ON ch.codMascota = co.codMascota
-            LEFT JOIN (
-                SELECT 
-                    ch.codMascota,
-                    SUM(me.precioUnitario * ch.cantidadMedic) AS totalMedicamento
-                FROM 
-                    ConsumoHotel ch
-                    JOIN Medicamentos me ON ch.codMedicamento = me.codMedicamento
-                GROUP BY 
-                    ch.codMascota
-            ) me ON ch.codMascota = me.codMascota
         WHERE 
-            h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin
+            h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin;
         
-        ORDER BY 
-            h.fechaIngreso;
+        -- Seleccionar datos del reporte
+        SELECT * FROM #tempReport;
 
-        SET @resultado = 1 -- Éxito
+        -- Calcular el precio total general
+        SELECT SUM(precioTotal) AS precioTotalGeneral FROM #tempReport;
+
+        SET @resultado = 1; -- Éxito
     END TRY
     BEGIN CATCH
-        SET @resultado = -1 -- Error
+        SET @resultado = -1; -- Error
     END CATCH
-END
+END;
 
 
 
