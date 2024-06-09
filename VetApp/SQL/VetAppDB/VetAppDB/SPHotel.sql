@@ -25,14 +25,19 @@ BEGIN
     DECLARE @Observaciones NVARCHAR(150) = 'Registro automático';
     DECLARE @NochesHosp INT;
 
-    -- Validar si ya existe un hospedaje con las mismas fechas para la misma mascota
-    IF EXISTS (SELECT 1 
-               FROM Hospedajes 
-               WHERE codMascota = @CodMascota 
-                 AND fechaIngreso = @FechaIngreso 
-                 AND fechaSalida = @FechaSalida)
+    -- Validar si ya existe un hospedaje que se solape en fechas para la misma mascota
+    IF EXISTS (
+        SELECT 1 
+        FROM Hospedajes 
+        WHERE codMascota = @CodMascota 
+          AND (
+                (fechaIngreso <= @FechaIngreso AND fechaSalida >= @FechaIngreso) OR
+                (fechaIngreso <= @FechaSalida AND fechaSalida >= @FechaSalida) OR
+                (fechaIngreso >= @FechaIngreso AND fechaSalida <= @FechaSalida)
+              )
+    )
     BEGIN
-        RAISERROR ('Ya existe un hospedaje para esta mascota con las mismas fechas.', 16, 1);
+        RAISERROR ('Ya existe un hospedaje para esta mascota con un rango de fechas que se solapa.', 16, 1);
         RETURN;
     END
 
@@ -101,6 +106,7 @@ END;
 
 
 
+
 /*
 
 EXEC RegistrarHospedaje 
@@ -110,6 +116,14 @@ EXEC RegistrarHospedaje
     @UsaNecesidadesEspeciales = 0, 
     @TamanoMascota = 'P';
 
+	demostrando que no puede solaparse las fechas para la misma mascota:
+
+	EXEC RegistrarHospedaje 
+    @CodMascota = 'M001', 
+    @FechaIngreso = '2024-06-09', 
+    @FechaSalida = '2024-06-11', 
+    @UsaNecesidadesEspeciales = 0, 
+    @TamanoMascota = 'P';
 
 	EXEC RegistrarHospedaje 
     @CodMascota = 'M002', 
