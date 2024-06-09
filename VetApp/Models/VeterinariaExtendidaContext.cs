@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using VetApp.ViewModels;
 
 namespace VetApp.Models;
 
@@ -768,5 +769,28 @@ public partial class VeterinariaExtendidaContext : DbContext
             codMascotaParam, codVacunaParam, fechaPrevistaParam);
     }
 
-
+    public async Task RegistrarHospedaje(RegistrarHospedajeViewModel model)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC RegistrarHospedaje @p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14",
+            parameters: new object[]
+            {
+                model.CodMascota,
+                model.FechaIngreso,
+                model.FechaSalida,
+                model.UsaNecesidadesEspeciales,
+                model.TamanoMascota,
+                model.NombreAlimento,
+                model.DescripcionAlimento,
+                model.ProveedorAlimento,
+                model.CantidadAlimento,
+                model.NombreComodidad,
+                model.DescripcionComodidad,
+                model.CantidadComodidad,
+                model.NombreMedicamento,
+                model.LaboratorioMedicamento,
+                model.PresentacionMedicamento,
+                model.PesoNetoMedicamento,
+                model.CantidadMedicamento
+            });
+    }
 }

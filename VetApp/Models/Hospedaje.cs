@@ -12,7 +12,7 @@ public partial class Hospedaje
 
     public DateOnly FechaIngreso { get; set; }
 
-    public DateOnly? FechaSalida { get; set; }
+    public DateOnly FechaSalida { get; set; }
 
     public string Observaciones { get; set; } = null!;
 
