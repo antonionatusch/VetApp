@@ -14,7 +14,7 @@ CREATE PROCEDURE RegistrarHospedaje
     @NombreMedicamento NVARCHAR(80) = NULL,
     @LaboratorioMedicamento NVARCHAR(80) = NULL,
     @PresentacionMedicamento NVARCHAR(30) = NULL,
-    @PesoNetoMedicamento DECIMAL(5,2),
+    @PesoNetoMedicamento DECIMAL(5,2) = NULL,
     @CantidadMedicamento INT = 0
 AS
 BEGIN
@@ -121,7 +121,7 @@ EXEC RegistrarHospedaje
 	EXEC RegistrarHospedaje 
     @CodMascota = 'M001', 
     @FechaIngreso = '2024-06-09', 
-    @FechaSalida = '2024-06-11', 
+    @FechaSalida = '2024-06-10', 
     @UsaNecesidadesEspeciales = 0, 
     @TamanoMascota = 'P';
 
