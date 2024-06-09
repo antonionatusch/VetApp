@@ -112,7 +112,25 @@ CREATE PROCEDURE GenerateHotelConsumptionReport
 AS
 BEGIN
     BEGIN TRY
-        -- Obtener datos de ConsumoHotel con cálculo de precio total
+        -- Crear una tabla temporal para almacenar los resultados parciales
+        CREATE TABLE #TempReport (
+            codMascota NVARCHAR(20),
+            nombreMascota NVARCHAR(80),
+            cliente NVARCHAR(80),
+            idServicio NVARCHAR(20),
+            nombreServicio NVARCHAR(80),
+            observaciones NVARCHAR(150),
+            nochesHosp INT,
+            cantidadAlim INT,
+            cantidadMedic INT,
+            cantidadCom INT,
+            NIT NVARCHAR(20),
+            fecha DATE,
+            precioTotal DECIMAL(18, 2)
+        );
+
+        -- Insertar los datos en la tabla temporal
+        INSERT INTO #TempReport
         SELECT 
             ch.codMascota,
             m.nombre AS nombreMascota,
@@ -149,7 +167,6 @@ BEGIN
                     WHERE me.codMedicamento = ch.codMedicamento
                 ), 0) -- Precio del medicamento consumido
             ) AS precioTotal
-        INTO #tempReport
         FROM 
             ConsumoHotel ch
             JOIN Mascotas m ON ch.codMascota = m.codMascota
@@ -158,12 +175,31 @@ BEGIN
             JOIN Hospedajes h ON ch.idHospedaje = h.idHospedaje AND ch.codMascota = h.codMascota
         WHERE 
             h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin;
-        
-        -- Seleccionar datos del reporte
-        SELECT * FROM #tempReport;
 
         -- Calcular el precio total general
-        SELECT SUM(precioTotal) AS precioTotalGeneral FROM #tempReport;
+        DECLARE @precioTotalGeneral DECIMAL(18, 2);
+        SELECT @precioTotalGeneral = SUM(precioTotal) FROM #TempReport;
+
+        -- Seleccionar los datos finales con el precio total general por mascota
+        SELECT 
+            codMascota,
+            nombreMascota,
+            cliente,
+            idServicio,
+            nombreServicio,
+            observaciones,
+            nochesHosp,
+            cantidadAlim,
+            cantidadMedic,
+            cantidadCom,
+            NIT,
+            fecha,
+            precioTotal,
+            @precioTotalGeneral AS precioTotalGeneral
+        FROM #TempReport;
+
+        -- Eliminar la tabla temporal
+        DROP TABLE #TempReport;
 
         SET @resultado = 1; -- Éxito
     END TRY
@@ -171,6 +207,7 @@ BEGIN
         SET @resultado = -1; -- Error
     END CATCH
 END;
+
 
 
 
