@@ -824,6 +824,8 @@ END;
 SELECT * FROM AplicaVacuna
 SELECT * FROM Consultas
 SELECT * FROM ConsumosVet
+SELECT * FROM Servicios
+SELECT * FROM Vacunas
 
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
 EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M002', @observaciones = 'Registro automático', @nit = '0987654321';
