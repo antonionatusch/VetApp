@@ -263,7 +263,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasConstraintName("FK_ComodCH");
 
             entity.HasOne(d => d.IdHospedajeNavigation).WithMany(p => p.ConsumoHotels)
-                .HasForeignKey(d => d.IdHospedaje)
+                .HasForeignKey(d => new { d.IdHospedaje, d.CodMascota })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HospedajeCH");
 
@@ -347,8 +347,7 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => new { e.IdHospedaje, e.CodMascota }).HasName("PK_idHospedaje");
 
-            entity.Property(e => e.IdHospedaje)
-                .HasColumnName("idHospedaje");
+            entity.Property(e => e.IdHospedaje).HasColumnName("idHospedaje");
             entity.Property(e => e.CodMascota)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -365,8 +364,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("observaciones");
 
-            entity.HasOne(d => d.CodMascotaNavigation)
-                .WithMany(p => p.Hospedajes)
+            entity.HasOne(d => d.CodMascotaNavigation).WithMany(p => p.Hospedajes)
                 .HasForeignKey(d => d.CodMascota)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MasHosp");
