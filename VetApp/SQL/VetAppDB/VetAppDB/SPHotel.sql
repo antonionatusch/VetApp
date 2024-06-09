@@ -25,6 +25,17 @@ BEGIN
     DECLARE @Observaciones NVARCHAR(150) = 'Registro automático';
     DECLARE @NochesHosp INT;
 
+    -- Validar si ya existe un hospedaje con las mismas fechas para la misma mascota
+    IF EXISTS (SELECT 1 
+               FROM Hospedajes 
+               WHERE codMascota = @CodMascota 
+                 AND fechaIngreso = @FechaIngreso 
+                 AND fechaSalida = @FechaSalida)
+    BEGIN
+        RAISERROR ('Ya existe un hospedaje para esta mascota con las mismas fechas.', 16, 1);
+        RETURN;
+    END
+
     -- Calcular la cantidad de noches de hospedaje
     SET @NochesHosp = DATEDIFF(DAY, @FechaIngreso, @FechaSalida);
 
@@ -86,6 +97,7 @@ BEGIN
         VALUES (@IdHospedaje, @IdServicioNecesidades, @CodMascota, @CodAlimento, @CodMedicamento, @CodComodidad, @Nit, @Observaciones, @NochesHosp, @CantidadAlimento, @CantidadMedicamento, @CantidadComodidad);
     END
 END;
+
 
 
 
