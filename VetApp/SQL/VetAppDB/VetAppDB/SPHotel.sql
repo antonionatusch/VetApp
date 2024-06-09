@@ -112,25 +112,7 @@ CREATE PROCEDURE GenerateHotelConsumptionReport
 AS
 BEGIN
     BEGIN TRY
-        -- Crear una tabla temporal para almacenar los resultados parciales
-        CREATE TABLE #TempReport (
-            codMascota NVARCHAR(20),
-            nombreMascota NVARCHAR(80),
-            cliente NVARCHAR(80),
-            idServicio NVARCHAR(20),
-            nombreServicio NVARCHAR(80),
-            observaciones NVARCHAR(150),
-            nochesHosp INT,
-            cantidadAlim INT,
-            cantidadMedic INT,
-            cantidadCom INT,
-            NIT NVARCHAR(20),
-            fecha DATE,
-            precioTotal DECIMAL(18, 2)
-        );
-
-        -- Insertar los datos en la tabla temporal
-        INSERT INTO #TempReport
+        -- Obtener datos de ConsumoHotel con cálculo de precio total
         SELECT 
             ch.codMascota,
             m.nombre AS nombreMascota,
@@ -167,6 +149,7 @@ BEGIN
                     WHERE me.codMedicamento = ch.codMedicamento
                 ), 0) -- Precio del medicamento consumido
             ) AS precioTotal
+        INTO #tempReport
         FROM 
             ConsumoHotel ch
             JOIN Mascotas m ON ch.codMascota = m.codMascota
@@ -175,31 +158,24 @@ BEGIN
             JOIN Hospedajes h ON ch.idHospedaje = h.idHospedaje AND ch.codMascota = h.codMascota
         WHERE 
             h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin;
-
-        -- Calcular el precio total general
-        DECLARE @precioTotalGeneral DECIMAL(18, 2);
-        SELECT @precioTotalGeneral = SUM(precioTotal) FROM #TempReport;
-
-        -- Seleccionar los datos finales con el precio total general por mascota
+        
+        -- Calcular el precio total general por mascota
         SELECT 
-            codMascota,
-            nombreMascota,
-            cliente,
-            idServicio,
-            nombreServicio,
-            observaciones,
-            nochesHosp,
-            cantidadAlim,
-            cantidadMedic,
-            cantidadCom,
-            NIT,
-            fecha,
-            precioTotal,
-            @precioTotalGeneral AS precioTotalGeneral
-        FROM #TempReport;
+            codMascota, 
+            SUM(precioTotal) AS precioTotalGeneral
+        INTO #totalPorMascota
+        FROM #tempReport
+        GROUP BY codMascota;
 
-        -- Eliminar la tabla temporal
-        DROP TABLE #TempReport;
+        -- Seleccionar datos del reporte con el precio total general por mascota
+        SELECT 
+            tr.*,
+            CASE 
+                WHEN tr.idServicio IN ('H001', 'H002', 'H003') THEN tm.precioTotalGeneral
+                ELSE NULL
+            END AS precioTotalGeneral
+        FROM #tempReport tr
+        LEFT JOIN #totalPorMascota tm ON tr.codMascota = tm.codMascota;
 
         SET @resultado = 1; -- Éxito
     END TRY
