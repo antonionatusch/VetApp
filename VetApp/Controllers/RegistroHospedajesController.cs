@@ -56,7 +56,11 @@ namespace VetApp.Controllers
             {
                 try
                 {
-                    await _context.RegistrarHospedaje(model);
+                    if (model.UsaNecesidadesEspeciales)
+                        await _context.RegistrarHospedajeConExtra(model);
+                    else
+                        await _context.RegistrarHospedajeSinExtra(model);
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)

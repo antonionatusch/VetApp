@@ -769,7 +769,17 @@ public partial class VeterinariaExtendidaContext : DbContext
             codMascotaParam, codVacunaParam, fechaPrevistaParam);
     }
 
-    public async Task RegistrarHospedaje(RegistrarHospedajeViewModel model)
+    public async Task RegistrarHospedajeSinExtra(RegistrarHospedajeViewModel model)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC RegistrarHospedaje @CodMascota, @FechaIngreso, @FechaSalida, @UsaNecesidadesEspeciales, @TamanoMascota",
+            new SqlParameter("@CodMascota", model.CodMascota),
+            new SqlParameter("@FechaIngreso", model.FechaIngreso),
+            new SqlParameter("@FechaSalida", model.FechaSalida),
+            new SqlParameter("@UsaNecesidadesEspeciales", model.UsaNecesidadesEspeciales),
+            new SqlParameter("@TamanoMascota", model.TamanoMascota));
+    }
+
+    public async Task RegistrarHospedajeConExtra(RegistrarHospedajeViewModel model)
     {
         await Database.ExecuteSqlRawAsync("EXEC RegistrarHospedaje @CodMascota, @FechaIngreso, @FechaSalida, @UsaNecesidadesEspeciales, @TamanoMascota, @NombreAlimento, @DescripcionAlimento, @ProveedorAlimento, @CantidadAlimento, @NombreComodidad, @DescripcionComodidad, @CantidadComodidad, @NombreMedicamento, @LaboratorioMedicamento, @PresentacionMedicamento, @PesoNetoMedicamento, @CantidadMedicamento",
             new SqlParameter("@CodMascota", model.CodMascota),
