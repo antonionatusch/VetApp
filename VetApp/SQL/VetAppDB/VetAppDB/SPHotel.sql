@@ -103,6 +103,89 @@ BEGIN
     END
 END;
 
+-- reporte consumo hotelero
+
+CREATE PROCEDURE GenerateHotelConsumptionReport
+    @fechaInicio DATE,
+    @fechaFin DATE,
+    @resultado INT OUTPUT
+AS
+BEGIN
+    BEGIN TRY
+        -- Obtener datos de ConsumoHotel con cálculo de precio total
+        SELECT 
+            ch.codMascota,
+            m.nombre AS nombreMascota,
+            c.apellido AS cliente,
+            ch.idServicio,
+            s.nombre AS nombreServicio,
+            ch.observaciones,
+            ch.nochesHosp,
+            ch.cantidadAlim,
+            ch.cantidadMedic,
+            ch.cantidadCom,
+            ch.NIT,
+            h.fechaIngreso AS fecha,
+            (
+                CASE 
+                    WHEN ch.idServicio IN ('H001', 'H002', 'H003') THEN 
+                        ch.nochesHosp * s.precio -- Precio del servicio de hospedaje
+                    ELSE 
+                        0
+                END
+                + ISNULL(a.totalAlimento, 0) -- Suma de los precios de los alimentos consumidos
+                + ISNULL(co.totalComodidad, 0) -- Suma de los precios de las comodidades consumidas
+                + ISNULL(me.totalMedicamento, 0) -- Suma de los precios de los medicamentos consumidos
+            ) AS precioTotal
+        FROM 
+            ConsumoHotel ch
+            JOIN Mascotas m ON ch.codMascota = m.codMascota
+            JOIN Clientes c ON m.codCliente = c.codCliente
+            JOIN Servicios s ON ch.idServicio = s.idServicio
+            JOIN Hospedajes h ON ch.idHospedaje = h.idHospedaje AND ch.codMascota = h.codMascota
+            LEFT JOIN (
+                SELECT 
+                    ch.codMascota,
+                    SUM(a.precioUnitario * ch.cantidadAlim) AS totalAlimento
+                FROM 
+                    ConsumoHotel ch
+                    JOIN Alimentos a ON ch.codAlimento = a.codAlimento
+                GROUP BY 
+                    ch.codMascota
+            ) a ON ch.codMascota = a.codMascota
+            LEFT JOIN (
+                SELECT 
+                    ch.codMascota,
+                    SUM(co.precioUnitario * ch.cantidadCom) AS totalComodidad
+                FROM 
+                    ConsumoHotel ch
+                    JOIN Comodidades co ON ch.idComodidad = co.idComodidad
+                GROUP BY 
+                    ch.codMascota
+            ) co ON ch.codMascota = co.codMascota
+            LEFT JOIN (
+                SELECT 
+                    ch.codMascota,
+                    SUM(me.precioUnitario * ch.cantidadMedic) AS totalMedicamento
+                FROM 
+                    ConsumoHotel ch
+                    JOIN Medicamentos me ON ch.codMedicamento = me.codMedicamento
+                GROUP BY 
+                    ch.codMascota
+            ) me ON ch.codMascota = me.codMascota
+        WHERE 
+            h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin
+        
+        ORDER BY 
+            h.fechaIngreso;
+
+        SET @resultado = 1 -- Éxito
+    END TRY
+    BEGIN CATCH
+        SET @resultado = -1 -- Error
+    END CATCH
+END
+
 
 
 
@@ -166,7 +249,15 @@ EXEC RegistrarHospedaje
 	SELECT * FROM Alimentos
 	SELECT * FROM Comodidades
 	SELECT * FROM Medicamentos
-	
+	SELECT * FROM Servicios
+
+	DECLARE @resultado INT;
+
+-- Ejecutar el procedimiento almacenado con un rango de fechas
+EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-06-01', @fechaFin = '2024-06-30', @resultado = @resultado OUTPUT;
+
+-- Ver el valor del resultado
+SELECT @resultado;
 
 
 
