@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.FechaPesaje)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Peso)
             </th>
             <th>
@@ -24,6 +27,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPesaje)
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Peso)
             </td>
@@ -31,9 +37,9 @@
                 @Html.DisplayFor(modelItem => item.CodMascotaNavigation.CodMascota)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje }) |
+                    @Html.ActionLink("Details", "Details", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje }) |
+                    @Html.ActionLink("Delete", "Delete", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje })
             </td>
         </tr>
 }

@@ -26,16 +26,16 @@ namespace VetApp.Controllers
         }
 
         // GET: Pesos/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string codMascota, DateOnly fechaPesaje)
         {
-            if (id == null)
+            if (codMascota == null || fechaPesaje == default)
             {
                 return NotFound();
             }
 
             var histPeso = await _context.HistPesos
                 .Include(h => h.CodMascotaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == id);
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaPesaje == fechaPesaje);
             if (histPeso == null)
             {
                 return NotFound();
@@ -52,8 +52,6 @@ namespace VetApp.Controllers
         }
 
         // POST: Pesos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CodMascota,FechaPesaje,Peso")] HistPeso histPeso)
@@ -69,14 +67,14 @@ namespace VetApp.Controllers
         }
 
         // GET: Pesos/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string codMascota, DateOnly fechaPesaje)
         {
-            if (id == null)
+            if (codMascota == null || fechaPesaje == default)
             {
                 return NotFound();
             }
 
-            var histPeso = await _context.HistPesos.FindAsync(id);
+            var histPeso = await _context.HistPesos.FindAsync(codMascota, fechaPesaje);
             if (histPeso == null)
             {
                 return NotFound();
@@ -86,13 +84,11 @@ namespace VetApp.Controllers
         }
 
         // POST: Pesos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CodMascota,FechaPesaje,Peso")] HistPeso histPeso)
+        public async Task<IActionResult> Edit(string codMascota, DateOnly fechaPesaje, [Bind("CodMascota,FechaPesaje,Peso")] HistPeso histPeso)
         {
-            if (id != histPeso.CodMascota)
+            if (codMascota != histPeso.CodMascota || fechaPesaje != histPeso.FechaPesaje)
             {
                 return NotFound();
             }
@@ -106,7 +102,7 @@ namespace VetApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HistPesoExists(histPeso.CodMascota))
+                    if (!HistPesoExists(histPeso.CodMascota, histPeso.FechaPesaje))
                     {
                         return NotFound();
                     }
@@ -122,16 +118,16 @@ namespace VetApp.Controllers
         }
 
         // GET: Pesos/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string codMascota, DateOnly fechaPesaje)
         {
-            if (id == null)
+            if (codMascota == null || fechaPesaje == default)
             {
                 return NotFound();
             }
 
             var histPeso = await _context.HistPesos
                 .Include(h => h.CodMascotaNavigation)
-                .FirstOrDefaultAsync(m => m.CodMascota == id);
+                .FirstOrDefaultAsync(m => m.CodMascota == codMascota && m.FechaPesaje == fechaPesaje);
             if (histPeso == null)
             {
                 return NotFound();
@@ -143,9 +139,9 @@ namespace VetApp.Controllers
         // POST: Pesos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string codMascota, DateOnly fechaPesaje)
         {
-            var histPeso = await _context.HistPesos.FindAsync(id);
+            var histPeso = await _context.HistPesos.FindAsync(codMascota, fechaPesaje);
             if (histPeso != null)
             {
                 _context.HistPesos.Remove(histPeso);
@@ -155,9 +151,9 @@ namespace VetApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HistPesoExists(string id)
+        private bool HistPesoExists(string codMascota, DateOnly fechaPesaje)
         {
-            return _context.HistPesos.Any(e => e.CodMascota == id);
+            return _context.HistPesos.Any(e => e.CodMascota == codMascota && e.FechaPesaje == fechaPesaje);
         }
     }
 }
