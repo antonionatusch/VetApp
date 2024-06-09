@@ -91,13 +91,13 @@ END;
 
 /*
 
-
 EXEC RegistrarHospedaje 
     @CodMascota = 'M001', 
     @FechaIngreso = '2024-06-09', 
     @FechaSalida = '2024-06-10', 
     @UsaNecesidadesEspeciales = 0, 
     @TamanoMascota = 'P';
+
 
 	EXEC RegistrarHospedaje 
     @CodMascota = 'M002', 
@@ -114,6 +114,26 @@ EXEC RegistrarHospedaje
     @PresentacionMedicamento = 'Tabletas', 
     @PesoNetoMedicamento = 0.5, 
     @TamanoMascota = 'M';
+
+	EXEC RegistrarHospedaje 
+    @CodMascota = 'M002', 
+    @FechaIngreso = '2024-05-09', 
+    @FechaSalida = '2024-05-12', 
+    @UsaNecesidadesEspeciales = 1, 
+    @NombreAlimento = 'Comida Especial', 
+    @DescripcionAlimento = 'Comida para dieta especial', 
+    @ProveedorAlimento = 'Proveedor A', 
+    @CantidadAlimento = 2,
+    @NombreComodidad = 'Cama especial', 
+    @DescripcionComodidad = 'Cama con calefacción', 
+    @CantidadComodidad = 1,
+    @NombreMedicamento = 'Medicamento B', 
+    @LaboratorioMedicamento = 'Laboratorio X', 
+    @PresentacionMedicamento = 'Tabletas', 
+    @PesoNetoMedicamento = 0.5,
+    @CantidadMedicamento = 1,
+    @TamanoMascota = 'M';
+
 
 	SELECT * FROM ConsumoHotel
 	SELECT * FROM Hospedajes
