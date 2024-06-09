@@ -256,6 +256,13 @@ BEGIN
 END
 GO
 
+/*
+
+EXEC InsertPersona '7820561', 'Antonio Natusch', '78074880', 'yo@gmail.com', 'aca'
+SELECT * FROM Personas
+
+*/
+
 CREATE PROCEDURE UpdatePersona
     @Ci VARCHAR(20),
     @Nombre VARCHAR(80),
