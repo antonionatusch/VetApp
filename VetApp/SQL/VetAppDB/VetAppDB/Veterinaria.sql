@@ -86,7 +86,7 @@ CREATE TABLE Hospedajes
 CREATE TABLE Alimentos
 (
 
-	codAlimento		idFijo,
+	codAlimento		INT IDENTITY(1,1) not null,
 	nombre			nombre,
 	descripcion		varchar(150) not null,
 	proveedor		nombre,
@@ -97,7 +97,7 @@ CREATE TABLE Alimentos
 CREATE TABLE Comodidades
 (
 
-	idComodidad		idFijo,
+	idComodidad		INT IDENTITY(1,1) not null,
 	nombre			nombre,
 	descripcion		varchar(150) not null,
 	precioUnitario	money not null,
@@ -108,7 +108,7 @@ CREATE TABLE Comodidades
 CREATE TABLE Medicamentos
 (
 
-	codMedicamento	idFijo,
+	codMedicamento	INT IDENTITY(1,1) not null,
 	laboratorio		nombre,
 	presentacion	char(30) not null,
 	pesoNeto		decimal(5,2) not null,
@@ -213,9 +213,9 @@ CREATE TABLE ConsumoHotel
 	idHospedaje		int not null,
 	idServicio		idFijo,
 	codMascota		idFijo,
-	codAlimento		char(20),
-	codMedicamento	char(20),
-	idComodidad		char(20),
+	codAlimento		int,
+	codMedicamento	int,
+	idComodidad		int,
 	NIT				varchar(20) NOT NULL,
 	observaciones	varchar(150) NOT NULL,
 	nochesHosp		int not null DEFAULT 1,

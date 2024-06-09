@@ -54,11 +54,7 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.CodAlimento).HasName("PK_Alim");
 
-            entity.Property(e => e.CodAlimento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codAlimento");
+            entity.Property(e => e.CodAlimento).HasColumnName("codAlimento");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
                 .IsUnicode(false)
@@ -75,6 +71,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("proveedor");
         });
+
 
         modelBuilder.Entity<AplicaVacuna>(entity =>
         {
@@ -148,11 +145,7 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.IdComodidad).HasName("PK_Com");
 
-            entity.Property(e => e.IdComodidad)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("idComodidad");
+            entity.Property(e => e.IdComodidad).HasColumnName("idComodidad");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
                 .IsUnicode(false)
@@ -165,6 +158,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnType("money")
                 .HasColumnName("precioUnitario");
         });
+
 
         modelBuilder.Entity<Consulta>(entity =>
         {
@@ -220,21 +214,9 @@ public partial class VeterinariaExtendidaContext : DbContext
             entity.Property(e => e.CantidadAlim).HasColumnName("cantidadAlim");
             entity.Property(e => e.CantidadCom).HasColumnName("cantidadCom");
             entity.Property(e => e.CantidadMedic).HasColumnName("cantidadMedic");
-            entity.Property(e => e.CodAlimento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codAlimento");
-            entity.Property(e => e.CodMedicamento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codMedicamento");
-            entity.Property(e => e.IdComodidad)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("idComodidad");
+            entity.Property(e => e.CodAlimento).HasColumnName("codAlimento");
+            entity.Property(e => e.CodMedicamento).HasColumnName("codMedicamento");
+            entity.Property(e => e.IdComodidad).HasColumnName("idComodidad");
             entity.Property(e => e.Nit)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -272,6 +254,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ServiciosCH");
         });
+
 
         modelBuilder.Entity<ConsumosVet>(entity =>
         {
@@ -413,31 +396,27 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.CodMedicamento).HasName("PK_Medic");
 
-            entity.Property(e => e.CodMedicamento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codMedicamento");
+            entity.Property(e => e.CodMedicamento).HasColumnName("codMedicamento");
             entity.Property(e => e.Laboratorio)
                 .HasMaxLength(80)
                 .IsUnicode(false)
                 .HasColumnName("laboratorio");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(80)
+            entity.Property(e => e.Presentacion)
+                .HasMaxLength(30)
                 .IsUnicode(false)
-                .HasColumnName("nombre");
+                .HasColumnName("presentacion");
             entity.Property(e => e.PesoNeto)
-                .HasColumnType("decimal(5, 2)")
+                .HasColumnType("decimal(5,2)")
                 .HasColumnName("pesoNeto");
             entity.Property(e => e.PrecioUnitario)
                 .HasColumnType("money")
                 .HasColumnName("precioUnitario");
-            entity.Property(e => e.Presentacion)
-                .HasMaxLength(30)
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
                 .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("presentacion");
+                .HasColumnName("nombre");
         });
+
 
         modelBuilder.Entity<Persona>(entity =>
         {

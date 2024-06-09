@@ -5,7 +5,7 @@ namespace VetApp.Models;
 
 public partial class Alimento
 {
-    public string CodAlimento { get; set; } = null!;
+    public int CodAlimento { get; set; }
 
     public string Nombre { get; set; } = null!;
 

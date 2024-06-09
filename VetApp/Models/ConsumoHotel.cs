@@ -12,11 +12,11 @@ public partial class ConsumoHotel
 
     public string CodMascota { get; set; } = null!;
 
-    public string? CodAlimento { get; set; }
+    public int? CodAlimento { get; set; }
 
-    public string? CodMedicamento { get; set; }
+    public int? CodMedicamento { get; set; }
 
-    public string? IdComodidad { get; set; }
+    public int? IdComodidad { get; set; }
 
     public string Nit { get; set; } = null!;
 
