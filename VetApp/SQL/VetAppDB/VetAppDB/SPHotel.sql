@@ -14,7 +14,7 @@ CREATE PROCEDURE RegistrarHospedaje
     @NombreMedicamento NVARCHAR(80) = NULL,
     @LaboratorioMedicamento NVARCHAR(80) = NULL,
     @PresentacionMedicamento NVARCHAR(30) = NULL,
-    @PesoNetoMedicamento DECIMAL(5,2) = NULL,
+    @PesoNetoMedicamento DECIMAL(5,2),
     @CantidadMedicamento INT = 0
 AS
 BEGIN
