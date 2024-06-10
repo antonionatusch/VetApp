@@ -1,19 +1,16 @@
-﻿@model IEnumerable<VetApp.ViewModels.RegistrarHospedajeViewModel>
+﻿@model IEnumerable<VetApp.Models.Hospedaje>
 
 @{
-    ViewData["Title"] = "Hospedajes";
+    ViewData["Title"] = "Lista de Hospedajes";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h1>Lista de Hospedajes</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Registrar Nuevo Hospedaje</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CodMascota)
+                @Html.DisplayNameFor(model => model.IdHospedaje)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FechaIngreso)
@@ -22,10 +19,10 @@
                 @Html.DisplayNameFor(model => model.FechaSalida)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TamanoMascota)
+                @Html.DisplayNameFor(model => model.Observaciones)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UsaNecesidadesEspeciales)
+                @Html.DisplayNameFor(model => model.CodMascotaNavigation.CodMascota)
             </th>
             <th></th>
         </tr>
@@ -35,7 +32,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CodMascota)
+                    @Html.DisplayFor(modelItem => item.IdHospedaje)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FechaIngreso)
@@ -44,10 +41,14 @@
                     @Html.DisplayFor(modelItem => item.FechaSalida)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TamanoMascota)
+                    @Html.DisplayFor(modelItem => item.Observaciones)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.UsaNecesidadesEspeciales)
+                    @Html.DisplayFor(modelItem => item.CodMascotaNavigation.Nombre)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.IdHospedaje, codMascota = item.CodMascota }) 
+                    
                 </td>
             </tr>
         }
