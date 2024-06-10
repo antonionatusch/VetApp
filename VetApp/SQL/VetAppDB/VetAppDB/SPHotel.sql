@@ -220,3 +220,12 @@ BEGIN
     END CATCH
 END;
 
+CREATE PROCEDURE UpdateBanoCount
+    @idHospedaje INT,
+    @cantidadBanos INT
+AS
+BEGIN
+    UPDATE ConsumoHotel
+    SET cantidadBanos = @cantidadBanos
+    WHERE idHospedaje = @idHospedaje AND idServicio IN ('BE001', 'BE002', 'BE003');
+END

@@ -56,5 +56,58 @@ namespace VetApp.Controllers
 
             return View(banos);
         }
+        // GET: RegistrarBanoExtra/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var consumoHotel = await _context.ConsumoHotels
+                .FirstOrDefaultAsync(ch => ch.IdHospedaje == id && (ch.IdServicio == "BE001" || ch.IdServicio == "BE002" || ch.IdServicio == "BE003"));
+            if (consumoHotel == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new RegistrarBanoExtraViewModel
+            {
+                IdHospedaje = consumoHotel.IdHospedaje,
+                CantidadBanos = consumoHotel.CantidadBanos
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: RegistrarBanoExtra/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, RegistrarBanoExtraViewModel model)
+        {
+            if (id != model.IdHospedaje)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.Database.ExecuteSqlRawAsync(
+                        "EXEC UpdateBanoCount @idHospedaje = {0}, @cantidadBanos = {1}",
+                        model.IdHospedaje, model.CantidadBanos
+                    );
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                }
+            }
+
+            return View(model);
+        }
     }
 }
