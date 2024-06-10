@@ -50,9 +50,7 @@
                     @Html.DisplayFor(modelItem => item.CodMascotaNavigation.Nombre)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdHospedaje" class="btn btn-primary custom-edit-btn">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.IdHospedaje" class="btn btn-info custom-details-btn">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.IdHospedaje" class="btn btn-danger custom-delete-btn">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdHospedaje" asp-route-codMascota="@item.CodMascota" class="btn btn-primary custom-edit-btn">Editar</a>
                 </td>
             </tr>
         }
