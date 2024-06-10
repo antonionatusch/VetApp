@@ -52,6 +52,11 @@ namespace VetApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegistrarHospedajeViewModel model)
         {
+
+            if (model.FechaSalida < model.FechaIngreso)
+            {
+                ModelState.AddModelError("FechaSalida", "La fecha de salida no puede ser menor que la fecha de ingreso.");
+            }
             if (ModelState.IsValid)
             {
                 try
