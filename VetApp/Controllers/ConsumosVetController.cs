@@ -38,8 +38,13 @@ namespace VetApp.Controllers
         // POST: ConsumosVet/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DateOnly FechaInicio, DateOnly FechaFin, string CodMascota, string Observaciones, string Nit)
+        public async Task<IActionResult> Create(DateOnly FechaInicio, DateOnly FechaFin, string CodMascota, string Observaciones, string Nit, ConsumosVetCreateViewModel model)
         {
+            if (model.FechaFin < model.FechaInicio)
+            {
+                ModelState.AddModelError("FechaFin", "La fecha de fin no puede ser menor que la fecha de inicio.");
+            }
+
             if (ModelState.IsValid)
             {
                 await _context.Database.ExecuteSqlInterpolatedAsync(
