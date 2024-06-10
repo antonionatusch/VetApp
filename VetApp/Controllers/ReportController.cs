@@ -26,6 +26,13 @@ namespace VetApp.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateReport(DateOnly fechaInicio, DateOnly fechaFin)
         {
+
+            if (fechaFin < fechaInicio)
+            {
+                ModelState.AddModelError("fechaFin", "La fecha de fin no puede ser menor que la fecha de inicio.");
+                return View();
+            }
+
             var reportResults = new List<ConsumosVetReportViewModel>();
 
             using (var command = _context.Database.GetDbConnection().CreateCommand())

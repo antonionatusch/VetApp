@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VetApp.Models
 {
-    public class ConsumosVetCreateViewModel
+    public class ConsumosVetCreateViewModel : IValidatableObject
     {
         [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
         [Display(Name = "Fecha Inicio")]
@@ -28,5 +28,16 @@ namespace VetApp.Models
         [Display(Name = "NIT")]
         [StringLength(20, ErrorMessage = "El NIT no puede exceder los 20 caracteres.")]
         public string Nit { get; set; } = null!;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (FechaFin < FechaInicio)
+            {
+                yield return new ValidationResult(
+                    "La fecha de fin no puede ser menor que la fecha de inicio",
+                    new[] { nameof(FechaFin) }
+                );
+            }
+        }
     }
 }
