@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VetApp.Models;
@@ -18,8 +19,14 @@ namespace VetApp.Controllers
             _context = context;
         }
 
-        public IActionResult GenerateHotelReport()
+        public async Task<IActionResult> GenerateHotelReportAsync()
         {
+            var hospedajes = await _context.Hospedajes
+              .Select(h => new { h.IdHospedaje, h.CodMascota })
+              .ToListAsync();
+
+            ViewBag.Hospedajes = new SelectList(hospedajes, "IdHospedaje", "IdHospedaje");
+
             return View();
         }
 
