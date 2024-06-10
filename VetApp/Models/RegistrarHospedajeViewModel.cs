@@ -19,7 +19,7 @@ namespace VetApp.ViewModels
         [DataType(DataType.Date)]
         public DateOnly FechaSalida { get; set; }
 
-        [Display(Name = "Tamaño de Mascota")]
+        [Display(Name = "Raza")]
         public string TamanoMascota { get; set; }
 
         [Display(Name = "Usa Necesidades Especiales")]
