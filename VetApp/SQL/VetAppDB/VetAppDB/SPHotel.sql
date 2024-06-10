@@ -111,6 +111,7 @@ CREATE PROCEDURE GenerateHotelConsumptionReport
     @resultado INT OUTPUT
 AS
 BEGIN
+	
     BEGIN TRY
         -- Obtener datos de ConsumoHotel con cálculo de precio total
         SELECT 
@@ -124,6 +125,7 @@ BEGIN
             ch.cantidadAlim,
             ch.cantidadMedic,
             ch.cantidadCom,
+            ch.cantidadBanos,
             ch.NIT,
             h.fechaIngreso AS fecha,
             (
@@ -148,6 +150,18 @@ BEGIN
                     FROM Medicamentos me
                     WHERE me.codMedicamento = ch.codMedicamento
                 ), 0) -- Precio del medicamento consumido
+                + ISNULL((
+                    SELECT sb.precio * ch.cantidadBanos
+                    FROM Servicios sb
+                    INNER JOIN ConsumoHotel ch ON sb.idServicio = ch.idServicio
+					WHERE
+					ch.idServicio = 'BE001'
+					OR
+					ch.idServicio = 'BE002'
+					OR
+					ch.idServicio = 'BE003'
+
+                ), 0) -- Precio del baño extra
             ) AS precioTotal
         INTO #tempReport
         FROM 
@@ -183,6 +197,9 @@ BEGIN
         SET @resultado = -1; -- Error
     END CATCH
 END;
+
+
+
 
 
 -- baños extra
@@ -290,19 +307,50 @@ EXEC RegistrarHospedaje
 	
 	DECLARE @resultado INT;
 
-	DELETE FROM ConsumoHotel WHERE idServicio = 'BE002'
+
 
 -- Ejecutar el procedimiento almacenado con un rango de fechas
-EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-06-01', @fechaFin = '2024-06-30', @resultado = @resultado OUTPUT;
+EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-05-01', @fechaFin = '2024-05-30', @resultado = @resultado OUTPUT;
 
 -- Ver el valor del resultado
 SELECT @resultado;
 
 -- Insertar 2 baños extra para el hospedaje con IdHospedaje 33
-EXEC RegistrarBanoExtra @IdHospedaje = 37, @CantidadBaños = 2;
+EXEC RegistrarBanoExtra @IdHospedaje = 39, @CantidadBaños = 2;
 
 
 
 
 
 */
+ SELECT Servicios.precio * ConsumoHotel.cantidadBanos
+                    FROM Servicios, ConsumoHotel 
+                    WHERE Servicios.idServicio = 
+                    CASE 
+                        WHEN ConsumoHotel.idServicio = 'H001' THEN 'BE001'
+                        WHEN ConsumoHotel.idServicio = 'H002' THEN 'BE002'
+                        WHEN ConsumoHotel.idServicio = 'H003' THEN 'BE003'
+                    END
+
+
+
+SELECT Servicios.precio * ConsumoHotel.cantidadBanos FROM Servicios, ConsumoHotel
+WHERE Servicios.idServicio = 
+CASE
+WHEN ConsumoHotel.idServicio = 'H001' THEN 'BE001'
+WHEN ConsumoHotel.idServicio = 'H002' THEN 'BE002'
+WHEN ConsumoHotel.idServicio = 'H003' THEN 'BE003'
+END
+
+select Servicios.precio * ConsumoHotel.cantidadBanos FROM Servicios
+INNER JOIN ConsumoHotel ON ConsumoHotel.idServicio = Servicios.idServicio
+WHERE ConsumoHotel.idServicio = 'BE002'
+
+SELECT Servicios.precio * ConsumoHotel.cantidadBanos FROM Servicios
+INNER JOIN ConsumoHotel ON Servicios.idServicio = ConsumoHotel.idServicio
+WHERE ConsumoHotel.idServicio = 'BE002'
+OR
+ConsumoHotel.idServicio = 'BE003'
+OR
+ConsumoHotel.idServicio = 'BE001'
+
