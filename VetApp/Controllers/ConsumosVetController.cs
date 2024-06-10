@@ -61,5 +61,72 @@ namespace VetApp.Controllers
             ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", CodMascota);
             return View();
         }
+
+        // GET: ConsumosVet/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var consumosVet = await _context.ConsumosVets
+                .Include(c => c.CodMascotaNavigation)
+                .Include(c => c.CodVacunaNavigation)
+                .Include(c => c.IdServicioNavigation)
+                .FirstOrDefaultAsync(m => m.IdConsumoVet == id);
+
+            if (consumosVet == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", consumosVet.CodMascota);
+            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre", consumosVet.CodVacuna);
+            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre", consumosVet.IdServicio);
+            return View(consumosVet);
+        }
+
+        // POST: ConsumosVet/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("IdConsumoVet,CodMascota,CodVacuna,IdServicio,Observaciones,CantVacunas,Nit")] ConsumosVet consumosVet)
+        {
+            if (id != consumosVet.IdConsumoVet)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(consumosVet);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ConsumosVetExists(consumosVet.IdConsumoVet))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["CodMascota"] = new SelectList(_context.Mascotas, "CodMascota", "Nombre", consumosVet.CodMascota);
+            ViewData["CodVacuna"] = new SelectList(_context.Vacunas, "CodVacuna", "Nombre", consumosVet.CodVacuna);
+            ViewData["IdServicio"] = new SelectList(_context.Servicios, "IdServicio", "Nombre", consumosVet.IdServicio);
+            return View(consumosVet);
+        }
+        private bool ConsumosVetExists(int id)
+        {
+            return _context.ConsumosVets.Any(e => e.IdConsumoVet == id);
+        }
     }
+
 }
