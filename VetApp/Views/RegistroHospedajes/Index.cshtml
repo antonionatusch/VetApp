@@ -7,9 +7,9 @@
 <h2>@ViewData["Title"]</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Registrar Nuevo Hospedaje</a>
+    <a asp-action="Create" class="btn btn-primary custom-create-btn">Registrar Nuevo Hospedaje</a>
 </p>
-<table class="table">
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>
@@ -27,7 +27,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.UsaNecesidadesEspeciales)
             </th>
-            <th></th>
+          
         </tr>
     </thead>
     <tbody>
@@ -49,7 +49,53 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.UsaNecesidadesEspeciales)
                 </td>
+            
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    .custom-create-btn {
+        background-color: #28a745; /* Verde */
+        border-color: #28a745;
+        color: white;
+    }
+
+    .custom-edit-btn {
+        background-color: #007bff; /* Azul */
+        border-color: #007bff;
+        color: white;
+        margin-right: 5px;
+    }
+
+    .custom-details-btn {
+        background-color: #17a2b8; /* Celeste */
+        border-color: #17a2b8;
+        color: white;
+        margin-right: 5px;
+    }
+
+    .custom-delete-btn {
+        background-color: #dc3545; /* Rojo */
+        border-color: #dc3545;
+        color: white;
+    }
+
+    .btn {
+        border-radius: 5px;
+        padding: 10px 20px;
+    }
+
+    .table {
+        margin-top: 20px;
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+</style>
