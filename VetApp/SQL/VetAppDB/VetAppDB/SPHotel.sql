@@ -1,3 +1,6 @@
+Use VeterinariaExtendida;
+GO
+
 CREATE PROCEDURE RegistrarHospedaje 
     @CodMascota NVARCHAR(20),
     @FechaIngreso DATE,
@@ -178,13 +181,6 @@ END;
 
 
 
-
-
-
-
-
-
-
 -- baños extra
 
 CREATE PROCEDURE RegistrarBanoExtra
@@ -223,102 +219,4 @@ BEGIN
         RAISERROR (@ErrorMessage, 16, 1);
     END CATCH
 END;
-
-
-
-
-/*
-
-EXEC RegistrarHospedaje 
-    @CodMascota = 'M001', 
-    @FechaIngreso = '2024-06-09', 
-    @FechaSalida = '2024-06-10', 
-    @UsaNecesidadesEspeciales = 0, 
-    @TamanoMascota = 'P';
-
-	demostrando que no puede solaparse las fechas para la misma mascota:
-
-	EXEC RegistrarHospedaje 
-    @CodMascota = 'M001', 
-    @FechaIngreso = '2024-06-09', 
-    @FechaSalida = '2024-06-10', 
-    @UsaNecesidadesEspeciales = 0, 
-    @TamanoMascota = 'P';
-
-	EXEC RegistrarHospedaje 
-    @CodMascota = 'M002', 
-    @FechaIngreso = '2024-06-09', 
-    @FechaSalida = '2024-06-12', 
-    @UsaNecesidadesEspeciales = 1, 
-    @NombreAlimento = 'Comida Especial', 
-    @DescripcionAlimento = 'Comida para dieta especial', 
-    @ProveedorAlimento = 'Proveedor A', 
-    @NombreComodidad = 'Cama especial', 
-    @DescripcionComodidad = 'Cama con calefacción', 
-    @NombreMedicamento = 'Medicamento B', 
-    @LaboratorioMedicamento = 'Laboratorio X', 
-    @PresentacionMedicamento = 'Tabletas', 
-    @PesoNetoMedicamento = 0.5, 
-    @TamanoMascota = 'M';
-
-	EXEC RegistrarHospedaje 
-    @CodMascota = 'M002', 
-    @FechaIngreso = '2024-05-09', 
-    @FechaSalida = '2024-05-12', 
-    @UsaNecesidadesEspeciales = 1, 
-    @NombreAlimento = 'Comida Especial', 
-    @DescripcionAlimento = 'Comida para dieta especial', 
-    @ProveedorAlimento = 'Proveedor A', 
-    @CantidadAlimento = 2,
-    @NombreComodidad = 'Cama especial', 
-    @DescripcionComodidad = 'Cama con calefacción', 
-    @CantidadComodidad = 1,
-    @NombreMedicamento = 'Medicamento B', 
-    @LaboratorioMedicamento = 'Laboratorio X', 
-    @PresentacionMedicamento = 'Tabletas', 
-    @PesoNetoMedicamento = 0.5,
-    @CantidadMedicamento = 1,
-    @TamanoMascota = 'M';
-
-
-	SELECT * FROM ConsumoHotel
-	SELECT * FROM Hospedajes
-	SELECT * FROM Servicios
-		DECLARE @resultado MONEY;
-
--- Ejecutar el stored procedure con las fechas de inicio, fin y el idHospedaje deseado
-EXEC GenerateHotelConsumptionReport 
-    @fechaInicio = '2024-06-01', 
-    @fechaFin = '2024-06-30', 
-    @idHospedaje = 49,  -- Reemplaza 1 con el idHospedaje que deseas filtrar
-    @resultado = @resultado OUTPUT;
-
--- Mostrar el resultado
-SELECT @resultado AS ConsumoTotal;
-	SELECT * FROM Alimentos
-	SELECT * FROM Comodidades
-	SELECT * FROM Medicamentos
-	
-	
-
-
-
-
-
-
--- Ejecutar el procedimiento almacenado con un rango de fechas
-EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-06-01', @fechaFin = '2024-06-30', @resultado = @resultado OUTPUT;
-
--- Ver el valor del resultado
-SELECT @resultado;
-
--- Insertar 2 baños extra para el hospedaje con IdHospedaje 33
-EXEC RegistrarBanoExtra @IdHospedaje = 49, @CantidadBanos = 2;
-
-
-DECLARE @resultado MONEY;
-
-
-
-*/
 

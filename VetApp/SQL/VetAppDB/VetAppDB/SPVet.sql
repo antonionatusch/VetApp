@@ -1,4 +1,6 @@
--- Procedimiento para generar un reporte de ConsumosVet entre dos fechas con precio total
+Use VeterinariaExtendida;
+GO
+
 CREATE PROCEDURE GenerateReportWithTotalPrice
     @fechaInicio DATE,
     @fechaFin DATE,
@@ -64,21 +66,9 @@ BEGIN
         SET @resultado = -1 -- Error
     END CATCH
 END
+GO
 
 
-/* Probando
-
-DECLARE @resultado INT;
-
-EXEC GenerateReportWithTotalPrice @fechaInicio = '2024-01-01', @fechaFin = '2024-12-31', @resultado = @resultado OUTPUT;
-
-SELECT @resultado AS Resultado;
-
-
-*/
-
-
--- Procedimiento para generar un reporte de ConsumosVet y Consultas para una mascota específica con precio total
 -- Procedimiento para generar un reporte de ConsumosVet y Consultas para una mascota específica con precio total
 CREATE PROCEDURE GenerateReportByPet
     @codMascota CHAR(20),
@@ -144,20 +134,8 @@ BEGIN
         SET @resultado = -1 -- Error
     END CATCH
 END
+GO
 
-
-/*
-Probando
-
-DECLARE @resultado INT;
-
-EXEC GenerateReportByPet @codMascota = 'M001', @resultado = @resultado OUTPUT;
-
-SELECT @resultado AS Resultado;
-
-
-
-*/
 -- insercion asociacion
 
 CREATE PROCEDURE PersonaCliente_Insert
@@ -177,13 +155,6 @@ BEGIN
     END
 END
 
-SELECT * FROM Personas
-SELECT * FROM Clientes
-SELECT * FROM PersonaCliente
-/*
--- Inserta una nueva asociación
-EXEC PersonaCliente_Insert @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-06-07';
-*/
 
 CREATE PROCEDURE PersonaCliente_Update
     @CodCliente nvarchar(20),
@@ -196,11 +167,6 @@ BEGIN
     WHERE CodCliente = @CodCliente AND Ci = @Ci;
 END
 
-SELECT * FROM PersonaCliente
-/*
--- Actualiza la fecha de asociación
-EXEC PersonaCliente_Update @CodCliente = 'C001', @Ci = '23232', @FechaAsociacion = '2024-07-01';
-*/
 
 CREATE PROCEDURE PersonaCliente_Delete
     @CodCliente nvarchar(20),
@@ -211,10 +177,7 @@ BEGIN
     WHERE CodCliente = @CodCliente AND Ci = @Ci;
 END
 
-/*
--- Elimina la asociación
-EXEC PersonaCliente_Delete @CodCliente = 'C001', @Ci = '23232';
-*/
+
 
 
 CREATE PROCEDURE InsertPersona
@@ -256,12 +219,7 @@ BEGIN
 END
 GO
 
-/*
 
-EXEC InsertPersona '7820561', 'Antonio Natusch', '78074880', 'yo@gmail.com', 'aca'
-SELECT * FROM Personas
-
-*/
 
 CREATE PROCEDURE UpdatePersona
     @Ci VARCHAR(20),
@@ -313,6 +271,7 @@ BEGIN
     DELETE FROM Personas
     WHERE ci = @Ci;
 END
+GO
 
 -- Vacunas
 
@@ -355,7 +314,7 @@ BEGIN
     INSERT INTO Vacunas (CodVacuna, Nombre, Laboratorio, PrevEnfermedad, Dosis, PrecioUnitario)
     VALUES (@CodVacuna, @Nombre, @Laboratorio, @PrevEnfermedad, @Dosis, @PrecioUnitario);
 END
-
+GO
 
 CREATE PROCEDURE UpdateVacuna
     @CodVacuna VARCHAR(20),
@@ -414,32 +373,6 @@ BEGIN
 END
 GO
 
-
-/*
-
-SELECT * FROM Personas
-
--- Insertar en Personas
-EXEC InsertPersona '1234567891', 'Juan Pérez', '1234567890', 'juan@example.com', '123 Calle Falsa';
-
--- Actualizar en Personas
-EXEC UpdatePersona '1234567891', 'Juan Pérez Actualizado', '0987654321', 'juan_actualizado@example.com', '456 Calle Verdadera';
-
--- Eliminar en Personas
-EXEC DeletePersona '1234567891';
-
--- Insertar en Clientes
-EXEC InsertCliente 'C123', 'Pérez', 'Juan', 'Banco XYZ', 'juan@example.com', '123456789', '123 Calle Falsa', '1234567890';
-
--- Actualizar en Clientes
-EXEC UpdateCliente 'C123', 'Pérez Actualizado', 'Juan Actualizado', 'Banco ABC', 'juan_actualizado@example.com', '987654321', '456 Calle Verdadera', '0987654321';
-
--- Eliminar en Clientes
-EXEC DeleteCliente 'C123';
-
-
-*/
--- clientes
 
 CREATE PROCEDURE InsertCliente
     @CodCliente VARCHAR(20),
@@ -680,27 +613,6 @@ BEGIN
 END;
 GO
 
-/* EXEC InsertarConsulta 
-    @codMascota = 'M001',
-    @fechaConsulta = '2024-06-07',
-    @motivo = 'Control de rutina',
-    @diagnostico = 'Buen estado de salud',
-    @tratamiento = 'Vacunación contra la rabia',
-    @medicacion = 'Ninguna';
-
-	EXEC ActualizarConsulta
-    @codMascota = 'M001',
-    @fechaConsulta = '2024-06-07',
-    @nuevoMotivo = 'Dientes amarillos (actualizado)',
-    @nuevoDiagnostico = 'Buen estado de salud (actualizado)',
-    @nuevoTratamiento = 'Vacunación contra la rabia (actualizado)',
-    @nuevaMedicacion = 'Ninguna (actualizado)';
-	
-	EXEC BorrarConsulta
-    @codMascota = 'M001',
-    @fechaConsulta = '2024-06-07';
-	SELECT * FROM Consultas
-*/
 
 -- Aplica Vacunas
 
@@ -816,6 +728,7 @@ BEGIN
     GROUP BY 
         con.codMascota, con.fechaConsulta, con.motivo, con.diagnostico, con.tratamiento, con.medicacion;
 END;
+GO
 
 
 
@@ -824,21 +737,4 @@ END;
 
 
 
--- pruebas
-
-/*
-
-SELECT * FROM AplicaVacuna
-SELECT * FROM Consultas
-SELECT * FROM ConsumosVet
-SELECT * FROM Servicios
-SELECT * FROM Vacunas
-
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M002', @observaciones = 'Registro automático', @nit = '0987654321';
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M003', @observaciones = 'Registro automático', @nit = '0987654321';
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M004', @observaciones = 'Registro automático', @nit = '0987654321';
-EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M005', @observaciones = 'Registro automático', @nit = '0987654321';
-
-*/
 

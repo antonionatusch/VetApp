@@ -1,6 +1,7 @@
-CREATE DATABASE VeterinariaExtendida
-USE VeterinariaExtendida
-
+CREATE DATABASE VeterinariaExtendida;
+GO
+USE VeterinariaExtendida;
+ 
 -- sin foreign keys: persona, cliente, vacuna, servicio, hospedaje, alimento, medicamento, comodidades
 
 /*
@@ -66,19 +67,6 @@ CREATE TABLE Servicios
 	unidadMedida	char(20) not null,
 	tipoServicio	char(20) not null,
 	CONSTRAINT PK_Ser PRIMARY KEY (idServicio)
-
-);
-
-CREATE TABLE Hospedajes
-(
-
-	idHospedaje		INT IDENTITY (1,1) not null,
-	codMascota		idFijo,
-	fechaIngreso	fechaObligatoria DEFAULT GETDATE(),
-	fechaSalida		date DEFAULT GETDATE(),
-	observaciones	varchar(150) not null,
-	CONSTRAINT PK_idHospedaje PRIMARY KEY (idHospedaje, codMascota),
-	CONSTRAINT FK_MasHosp FOREIGN KEY (codMascota) REFERENCES Mascotas
 
 );
 
@@ -207,6 +195,19 @@ CREATE TABLE AplicaVacuna
 
 );
 
+CREATE TABLE Hospedajes
+(
+
+	idHospedaje		INT IDENTITY (1,1) not null,
+	codMascota		idFijo,
+	fechaIngreso	fechaObligatoria DEFAULT GETDATE(),
+	fechaSalida		date DEFAULT GETDATE(),
+	observaciones	varchar(150) not null,
+	CONSTRAINT PK_idHospedaje PRIMARY KEY (idHospedaje, codMascota),
+	CONSTRAINT FK_MasHosp FOREIGN KEY (codMascota) REFERENCES Mascotas
+
+);
+
 CREATE TABLE ConsumoHotel
 (
 
@@ -232,4 +233,6 @@ CREATE TABLE ConsumoHotel
 	CONSTRAINT FK_ComodCH FOREIGN KEY (idComodidad) REFERENCES Comodidades,
 	
 );
+
+
 
