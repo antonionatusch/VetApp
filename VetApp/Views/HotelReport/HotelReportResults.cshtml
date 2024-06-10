@@ -1,0 +1,31 @@
+﻿@model IEnumerable<VetApp.Models.HotelConsumptionReportViewModel>
+
+@{
+    ViewData["Title"] = "Hotel Report Results";
+}
+
+<h1>Hotel Report Results</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Hospedaje</th>
+            <th>Código Mascota</th>
+            <th>Fecha Ingreso</th>
+            <th>Fecha Salida</th>
+            <th>Precio Total General</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdHospedaje</td>
+                <td>@item.CodMascota</td>
+                <td>@item.FechaIngreso.ToShortDateString()</td>
+                <td>@item.FechaSalida.ToShortDateString()</td>
+                <td>@item.PrecioTotalGeneral</td>
+            </tr>
+        }
+    </tbody>
+</table>

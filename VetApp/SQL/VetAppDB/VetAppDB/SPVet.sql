@@ -256,6 +256,13 @@ BEGIN
 END
 GO
 
+/*
+
+EXEC InsertPersona '7820561', 'Antonio Natusch', '78074880', 'yo@gmail.com', 'aca'
+SELECT * FROM Personas
+
+*/
+
 CREATE PROCEDURE UpdatePersona
     @Ci VARCHAR(20),
     @Nombre VARCHAR(80),
@@ -694,3 +701,144 @@ GO
     @fechaConsulta = '2024-06-07';
 	SELECT * FROM Consultas
 */
+
+-- Aplica Vacunas
+
+CREATE PROCEDURE InsertarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE,
+    @fechaAplicacion DATE = NULL,
+    @dosisAplicada INT = 0
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna ya existe.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO AplicaVacuna (codMascota, codVacuna, fechaPrevista, fechaAplicacion, dosisAplicada)
+    VALUES (@codMascota, @codVacuna, @fechaPrevista, ISNULL(@fechaAplicacion, GETDATE()), @dosisAplicada);
+END;
+GO
+
+CREATE PROCEDURE ActualizarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE,
+    @fechaAplicacion DATE,
+    @dosisAplicada INT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna no existe.', 16, 1);
+        RETURN;
+    END
+
+    UPDATE AplicaVacuna
+    SET fechaAplicacion = @fechaAplicacion,
+        dosisAplicada = @dosisAplicada
+    WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista;
+END;
+GO
+
+CREATE PROCEDURE BorrarAplicaVacuna
+    @codMascota VARCHAR(20),
+    @codVacuna VARCHAR(20),
+    @fechaPrevista DATE
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM AplicaVacuna WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista)
+    BEGIN
+        RAISERROR('El registro de aplicación de vacuna no existe.', 16, 1);
+        RETURN;
+    END
+
+    DELETE FROM AplicaVacuna
+    WHERE codMascota = @codMascota AND codVacuna = @codVacuna AND fechaPrevista = @fechaPrevista;
+END;
+GO
+
+-- Insertando Consumos Médicos con SP
+
+CREATE PROCEDURE InsertarConsumoVet
+    @fechaInicio DATE,
+    @fechaFin DATE,
+    @codMascota VARCHAR(20),
+    @observaciones VARCHAR(200),
+    @nit VARCHAR(20)
+AS
+BEGIN
+    -- Insertar aplicaciones de vacunas
+    INSERT INTO ConsumosVet (codMascota, codVacuna, idServicio, observaciones, cantVacunas, nit)
+    SELECT 
+        a.codMascota,
+        a.codVacuna,
+        'AV000', -- ID del servicio de aplicación de vacunas
+        @observaciones,
+        SUM(a.dosisAplicada),
+        @nit
+    FROM 
+        AplicaVacuna a
+    LEFT JOIN 
+        ConsumosVet c
+    ON 
+        a.codMascota = c.codMascota AND a.codVacuna = c.codVacuna AND c.idServicio = 'AV000'
+    WHERE 
+        a.fechaAplicacion BETWEEN @fechaInicio AND @fechaFin
+        AND c.codMascota IS NULL
+        AND a.codMascota = @codMascota
+    GROUP BY 
+        a.codMascota, a.codVacuna;
+
+    -- Insertar consultas generales
+    INSERT INTO ConsumosVet (codMascota, codVacuna, idServicio, observaciones, cantVacunas, nit)
+    SELECT 
+        con.codMascota,
+        NULL, -- Sin vacuna en las consultas generales
+        'CG000', -- ID del servicio de consultas generales
+        @observaciones,
+        0, -- Sin vacunas en consultas generales
+        @nit
+    FROM 
+        Consultas con
+    LEFT JOIN 
+        ConsumosVet c
+    ON 
+        con.codMascota = c.codMascota AND c.idServicio = 'CG000' 
+    WHERE 
+        con.fechaConsulta BETWEEN @fechaInicio AND @fechaFin
+        AND c.codMascota IS NULL
+        AND con.codMascota = @codMascota
+		AND idServicio IS NULL
+    GROUP BY 
+        con.codMascota, con.fechaConsulta, con.motivo, con.diagnostico, con.tratamiento, con.medicacion;
+END;
+
+
+
+
+
+
+
+
+-- pruebas
+
+/*
+
+SELECT * FROM AplicaVacuna
+SELECT * FROM Consultas
+SELECT * FROM ConsumosVet
+SELECT * FROM Servicios
+SELECT * FROM Vacunas
+
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M001', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M002', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M003', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M004', @observaciones = 'Registro automático', @nit = '0987654321';
+EXEC InsertarConsumoVet @fechaInicio = '2024-05-01', @fechaFin = '2024-08-06', @codMascota = 'M005', @observaciones = 'Registro automático', @nit = '0987654321';
+
+*/
+

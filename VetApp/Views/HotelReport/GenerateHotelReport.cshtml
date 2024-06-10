@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Generate Hotel Report";
+}
+
+<h1>Generate Hotel Report</h1>
+
+<form asp-action="GenerateHotelReport" method="post">
+    <div class="form-group">
+        <label for="fechaInicio">Fecha Inicio</label>
+        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required />
+    </div>
+    <div class="form-group">
+        <label for="fechaFin">Fecha Fin</label>
+        <input type="date" class="form-control" id="fechaFin" name="fechaFin" required />
+    </div>
+    <div class="form-group">
+        <label for="idHospedaje">ID Hospedaje</label>
+        <select class="form-control" id="idHospedaje" name="idHospedaje" asp-items="ViewBag.Hospedajes"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Generate Report</button>
+</form>

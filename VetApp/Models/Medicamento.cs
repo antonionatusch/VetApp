@@ -5,7 +5,7 @@ namespace VetApp.Models;
 
 public partial class Medicamento
 {
-    public string CodMedicamento { get; set; } = null!;
+    public int CodMedicamento { get; set; }
 
     public string Laboratorio { get; set; } = null!;
 

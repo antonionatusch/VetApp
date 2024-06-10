@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using VetApp.ViewModels;
 
 namespace VetApp.Models;
 
@@ -54,11 +55,7 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.CodAlimento).HasName("PK_Alim");
 
-            entity.Property(e => e.CodAlimento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codAlimento");
+            entity.Property(e => e.CodAlimento).HasColumnName("codAlimento");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
                 .IsUnicode(false)
@@ -75,6 +72,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("proveedor");
         });
+
 
         modelBuilder.Entity<AplicaVacuna>(entity =>
         {
@@ -148,11 +146,7 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.IdComodidad).HasName("PK_Com");
 
-            entity.Property(e => e.IdComodidad)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("idComodidad");
+            entity.Property(e => e.IdComodidad).HasColumnName("idComodidad");
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(150)
                 .IsUnicode(false)
@@ -165,6 +159,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnType("money")
                 .HasColumnName("precioUnitario");
         });
+
 
         modelBuilder.Entity<Consulta>(entity =>
         {
@@ -199,6 +194,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasConstraintName("FK_MascConsultas");
         });
 
+
         modelBuilder.Entity<ConsumoHotel>(entity =>
         {
             entity.HasKey(e => new { e.IdHospedaje, e.IdServicio, e.CodMascota });
@@ -218,22 +214,11 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnName("codMascota");
             entity.Property(e => e.CantidadAlim).HasColumnName("cantidadAlim");
             entity.Property(e => e.CantidadCom).HasColumnName("cantidadCom");
+            entity.Property(e => e.CantidadBanos).HasDefaultValue(0);
             entity.Property(e => e.CantidadMedic).HasColumnName("cantidadMedic");
-            entity.Property(e => e.CodAlimento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codAlimento");
-            entity.Property(e => e.CodMedicamento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codMedicamento");
-            entity.Property(e => e.IdComodidad)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("idComodidad");
+            entity.Property(e => e.CodAlimento).HasColumnName("codAlimento");
+            entity.Property(e => e.CodMedicamento).HasColumnName("codMedicamento");
+            entity.Property(e => e.IdComodidad).HasColumnName("idComodidad");
             entity.Property(e => e.Nit)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -242,6 +227,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("observaciones");
+            entity.Property(e => e.NochesHosp).HasColumnName("nochesHosp");
 
             entity.HasOne(d => d.CodAlimentoNavigation).WithMany(p => p.ConsumoHotels)
                 .HasForeignKey(d => d.CodAlimento)
@@ -261,7 +247,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasConstraintName("FK_ComodCH");
 
             entity.HasOne(d => d.IdHospedajeNavigation).WithMany(p => p.ConsumoHotels)
-                .HasForeignKey(d => d.IdHospedaje)
+                .HasForeignKey(d => new { d.IdHospedaje, d.CodMascota })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HospedajeCH");
 
@@ -270,6 +256,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ServiciosCH");
         });
+
 
         modelBuilder.Entity<ConsumosVet>(entity =>
         {
@@ -343,9 +330,14 @@ public partial class VeterinariaExtendidaContext : DbContext
 
         modelBuilder.Entity<Hospedaje>(entity =>
         {
-            entity.HasKey(e => e.IdHospedaje).HasName("PK_idHospedaje");
+            entity.HasKey(e => new { e.IdHospedaje, e.CodMascota }).HasName("PK_idHospedaje");
 
             entity.Property(e => e.IdHospedaje).HasColumnName("idHospedaje");
+            entity.Property(e => e.CodMascota)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("codMascota");
             entity.Property(e => e.FechaIngreso)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("fechaIngreso");
@@ -356,7 +348,13 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("observaciones");
+
+            entity.HasOne(d => d.CodMascotaNavigation).WithMany(p => p.Hospedajes)
+                .HasForeignKey(d => d.CodMascota)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MasHosp");
         });
+
 
         modelBuilder.Entity<Mascota>(entity =>
         {
@@ -400,31 +398,27 @@ public partial class VeterinariaExtendidaContext : DbContext
         {
             entity.HasKey(e => e.CodMedicamento).HasName("PK_Medic");
 
-            entity.Property(e => e.CodMedicamento)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("codMedicamento");
+            entity.Property(e => e.CodMedicamento).HasColumnName("codMedicamento");
             entity.Property(e => e.Laboratorio)
                 .HasMaxLength(80)
                 .IsUnicode(false)
                 .HasColumnName("laboratorio");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(80)
+            entity.Property(e => e.Presentacion)
+                .HasMaxLength(30)
                 .IsUnicode(false)
-                .HasColumnName("nombre");
+                .HasColumnName("presentacion");
             entity.Property(e => e.PesoNeto)
-                .HasColumnType("decimal(5, 2)")
+                .HasColumnType("decimal(5,2)")
                 .HasColumnName("pesoNeto");
             entity.Property(e => e.PrecioUnitario)
                 .HasColumnType("money")
                 .HasColumnName("precioUnitario");
-            entity.Property(e => e.Presentacion)
-                .HasMaxLength(30)
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(80)
                 .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("presentacion");
+                .HasColumnName("nombre");
         });
+
 
         modelBuilder.Entity<Persona>(entity =>
         {
@@ -741,4 +735,71 @@ public partial class VeterinariaExtendidaContext : DbContext
         await Database.ExecuteSqlRawAsync("EXEC BorrarConsulta @p0, @p1",
             parameters: new object[] { codMascota, fechaConsulta.ToString("yyyy-MM-dd") });
     }
+
+    public void InsertarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista, DateOnly? fechaAplicacion, int dosisAplicada)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+        var fechaAplicacionParam = new SqlParameter("@FechaAplicacion", SqlDbType.Date) { Value = (object)fechaAplicacion ?? DBNull.Value };
+        var dosisAplicadaParam = new SqlParameter("@DosisAplicada", SqlDbType.Int) { Value = dosisAplicada };
+
+        Database.ExecuteSqlRaw("EXEC InsertarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista, @FechaAplicacion, @DosisAplicada",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam, fechaAplicacionParam, dosisAplicadaParam);
+    }
+
+    public void ActualizarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista, DateOnly? nuevaFechaAplicacion, int nuevaDosisAplicada)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+        var nuevaFechaAplicacionParam = new SqlParameter("@FechaAplicacion", SqlDbType.Date) { Value = (object)nuevaFechaAplicacion ?? DBNull.Value };
+        var nuevaDosisAplicadaParam = new SqlParameter("@DosisAplicada", SqlDbType.Int) { Value = nuevaDosisAplicada };
+
+        Database.ExecuteSqlRaw("EXEC ActualizarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista, @FechaAplicacion, @DosisAplicada",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam, nuevaFechaAplicacionParam, nuevaDosisAplicadaParam);
+    }
+
+    public void BorrarAplicaVacuna(string codMascota, string codVacuna, DateOnly fechaPrevista)
+    {
+        var codMascotaParam = new SqlParameter("@CodMascota", SqlDbType.NVarChar) { Value = codMascota };
+        var codVacunaParam = new SqlParameter("@CodVacuna", SqlDbType.NVarChar) { Value = codVacuna };
+        var fechaPrevistaParam = new SqlParameter("@FechaPrevista", SqlDbType.Date) { Value = fechaPrevista };
+
+        Database.ExecuteSqlRaw("EXEC BorrarAplicaVacuna @CodMascota, @CodVacuna, @FechaPrevista",
+            codMascotaParam, codVacunaParam, fechaPrevistaParam);
+    }
+
+    public async Task RegistrarHospedajeSinExtra(RegistrarHospedajeViewModel model)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC RegistrarHospedaje @CodMascota, @FechaIngreso, @FechaSalida, @UsaNecesidadesEspeciales, @TamanoMascota",
+            new SqlParameter("@CodMascota", model.CodMascota),
+            new SqlParameter("@FechaIngreso", model.FechaIngreso),
+            new SqlParameter("@FechaSalida", model.FechaSalida),
+            new SqlParameter("@UsaNecesidadesEspeciales", model.UsaNecesidadesEspeciales),
+            new SqlParameter("@TamanoMascota", model.TamanoMascota));
+    }
+
+    public async Task RegistrarHospedajeConExtra(RegistrarHospedajeViewModel model)
+    {
+        await Database.ExecuteSqlRawAsync("EXEC RegistrarHospedaje @CodMascota, @FechaIngreso, @FechaSalida, @UsaNecesidadesEspeciales, @TamanoMascota, @NombreAlimento, @DescripcionAlimento, @ProveedorAlimento, @CantidadAlimento, @NombreComodidad, @DescripcionComodidad, @CantidadComodidad, @NombreMedicamento, @LaboratorioMedicamento, @PresentacionMedicamento, @PesoNetoMedicamento, @CantidadMedicamento",
+            new SqlParameter("@CodMascota", model.CodMascota),
+            new SqlParameter("@FechaIngreso", model.FechaIngreso),
+            new SqlParameter("@FechaSalida", model.FechaSalida),
+            new SqlParameter("@UsaNecesidadesEspeciales", model.UsaNecesidadesEspeciales),
+            new SqlParameter("@TamanoMascota", model.TamanoMascota),
+            new SqlParameter("@NombreAlimento", model.NombreAlimento),
+            new SqlParameter("@DescripcionAlimento", model.DescripcionAlimento),
+            new SqlParameter("@ProveedorAlimento", model.ProveedorAlimento),
+            new SqlParameter("@CantidadAlimento", model.CantidadAlimento),
+            new SqlParameter("@NombreComodidad", model.NombreComodidad),
+            new SqlParameter("@DescripcionComodidad", model.DescripcionComodidad),
+            new SqlParameter("@CantidadComodidad", model.CantidadComodidad),
+            new SqlParameter("@NombreMedicamento", model.NombreMedicamento),
+            new SqlParameter("@LaboratorioMedicamento", model.LaboratorioMedicamento),
+            new SqlParameter("@PresentacionMedicamento", model.PresentacionMedicamento),
+            new SqlParameter("@PesoNetoMedicamento", model.PesoNetoMedicamento),
+            new SqlParameter("@CantidadMedicamento", model.CantidadMedicamento));
+    }
+
 }

@@ -27,3 +27,9 @@ DELETE FROM Vacunas;
 -- Borrar datos de la tabla Servicios
 DELETE FROM Servicios;
 
+DELETE FROM ConsumoHotel
+DELETE FROM Alimentos;
+DELETE FROM Medicamentos;
+DELETE FROM Comodidades;
+DELETE FROM Hospedajes;
+

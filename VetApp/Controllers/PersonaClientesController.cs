@@ -24,6 +24,26 @@ namespace VetApp.Controllers
             return View(await veterinariaExtendidaContext.ToListAsync());
         }
 
+        // GET: PersonaClientes/Details
+        public async Task<IActionResult> Details(string codCliente, string ci, DateOnly fechaAsociacion)
+        {
+            if (codCliente == null || ci == null)
+            {
+                return NotFound();
+            }
+
+            var personaCliente = await _context.PersonaClientes
+                .Include(p => p.CiNavigation)
+                .Include(p => p.CodClienteNavigation)
+                .FirstOrDefaultAsync(m => m.CodCliente == codCliente && m.Ci == ci && m.FechaAsociacion == fechaAsociacion);
+            if (personaCliente == null)
+            {
+                return NotFound();
+            }
+
+            return View(personaCliente);
+        }
+
         // GET: PersonaClientes/Create
         public IActionResult Create()
         {

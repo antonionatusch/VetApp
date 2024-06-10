@@ -129,9 +129,9 @@ SELECT * FROM Clientes
 SELECT * FROM Mascotas
 SELECT * FROM PersonaCliente
 SELECT * FROM Servicios
-SELECT * FROM ConsumosVet
-SELECT * FROM Vacunas 
+SELECT * FROM AplicaVacuna 
 SELECT * FROM Consultas
+SELECT * FROM ConsumosVet
 SELECT * FROM Hospedajes;
 SELECT * FROM Comodidades;
 SELECT * FROM Alimentos;
