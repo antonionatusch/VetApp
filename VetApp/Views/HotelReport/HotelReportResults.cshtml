@@ -9,10 +9,19 @@
 <table class="table">
     <thead>
         <tr>
-            <th>ID Hospedaje</th>
-            <th>Código Mascota</th>
-            <th>Fecha Ingreso</th>
-            <th>Fecha Salida</th>
+            <th>Mascota</th>
+            <th>Nombre Mascota</th>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Nombre Servicio</th>
+            <th>Observaciones</th>
+            <th>Noches Hospedadas</th>
+            <th>Cantidad Alimentos</th>
+            <th>Cantidad Medicamentos</th>
+            <th>Cantidad Comodidades</th>
+            <th>NIT</th>
+            <th>Fecha</th>
+            <th>Precio Total</th>
             <th>Precio Total General</th>
         </tr>
     </thead>
@@ -20,10 +29,19 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.IdHospedaje</td>
                 <td>@item.CodMascota</td>
-                <td>@item.FechaIngreso.ToShortDateString()</td>
-                <td>@item.FechaSalida.ToShortDateString()</td>
+                <td>@item.NombreMascota</td>
+                <td>@item.Cliente</td>
+                <td>@item.IdServicio</td>
+                <td>@item.NombreServicio</td>
+                <td>@item.Observaciones</td>
+                <td>@item.NochesHosp</td>
+                <td>@item.CantidadAlim</td>
+                <td>@item.CantidadMedic</td>
+                <td>@item.CantidadCom</td>
+                <td>@item.Nit</td>
+                <td>@item.Fecha.ToShortDateString()</td>
+                <td>@item.PrecioTotal</td>
                 <td>@item.PrecioTotalGeneral</td>
             </tr>
         }

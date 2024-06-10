@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VetApp.Models;
@@ -19,80 +18,66 @@ namespace VetApp.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> GenerateHotelReportAsync()
+        public IActionResult GenerateHotelReport()
         {
-            var hospedajes = await _context.Hospedajes
-                .Select(h => new { h.IdHospedaje, h.CodMascota })
-                .ToListAsync();
-
-            ViewBag.Hospedajes = new SelectList(hospedajes, "IdHospedaje", "IdHospedaje");
-
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateHotelReport(HotelConsumptionReportViewModel model)
+        public async Task<IActionResult> GenerateHotelReport(DateOnly fechaInicio, DateOnly fechaFin)
         {
-            if (model.FechaSalida < model.FechaIngreso)
-            {
-                ModelState.AddModelError("FechaSalida", "La fecha de salida no puede ser menor que la fecha de ingreso.");
-            }
+            var reportResults = new List<HotelConsumptionReportViewModel>();
 
-            if (ModelState.IsValid)
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                var reportResults = new List<HotelConsumptionReportViewModel>();
+                command.CommandText = "GenerateHotelConsumptionReport";
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@fechaInicio", fechaInicio));
+                command.Parameters.Add(new SqlParameter("@fechaFin", fechaFin));
 
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                var resultadoParam = new SqlParameter("@resultado", SqlDbType.Int)
                 {
-                    command.CommandText = "GenerateHotelConsumptionReport";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter("@fechaInicio", model.FechaIngreso.ToString("yyyy-MM-dd")));
-                    command.Parameters.Add(new SqlParameter("@fechaFin", model.FechaSalida.ToString("yyyy-MM-dd")));
-                    command.Parameters.Add(new SqlParameter("@idHospedaje", model.IdHospedaje));
+                    Direction = ParameterDirection.Output
+                };
+                command.Parameters.Add(resultadoParam);
 
-                    var resultadoParam = new SqlParameter("@resultado", SqlDbType.Money)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
-                    command.Parameters.Add(resultadoParam);
+                await _context.Database.OpenConnectionAsync();
 
-                    await _context.Database.OpenConnectionAsync();
-
-                    // Ejecutar el stored procedure
-                    await command.ExecuteNonQueryAsync();
-
-                    // Leer el resultado del parámetro de salida
-                    var resultado = (decimal)resultadoParam.Value;
-
-                    // Obtener detalles del hospedaje
-                    var hospedaje = await _context.Hospedajes
-                        .FirstOrDefaultAsync(h => h.IdHospedaje == model.IdHospedaje && h.FechaIngreso >= DateOnly.FromDateTime(model.FechaIngreso.ToDateTime(TimeOnly.MinValue)) && h.FechaSalida <= DateOnly.FromDateTime(model.FechaSalida.ToDateTime(TimeOnly.MinValue)));
-
-                    if (hospedaje != null)
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    while (await result.ReadAsync())
                     {
                         reportResults.Add(new HotelConsumptionReportViewModel
                         {
-                            IdHospedaje = model.IdHospedaje,
-                            CodMascota = hospedaje.CodMascota,
-                            FechaIngreso = hospedaje.FechaIngreso,
-                            FechaSalida = hospedaje.FechaSalida,
-                            PrecioTotalGeneral = resultado
+                            CodMascota = result.GetString(0),
+                            NombreMascota = result.GetString(1),
+                            Cliente = result.GetString(2),
+                            IdServicio = result.GetString(3),
+                            NombreServicio = result.GetString(4),
+                            Observaciones = result.GetString(5),
+                            NochesHosp = result.GetInt32(6),
+                            CantidadAlim = result.GetInt32(7),
+                            CantidadMedic = result.GetInt32(8),
+                            CantidadCom = result.GetInt32(9),
+                            Nit = result.GetString(10),
+                            Fecha = DateOnly.FromDateTime(result.GetDateTime(11)),
+                            PrecioTotal = result.GetDecimal(12),
+                            PrecioTotalGeneral = result.IsDBNull(13) ? (decimal?)null : result.GetDecimal(13)
                         });
                     }
-
-                    await _context.Database.CloseConnectionAsync();
                 }
 
-                return View("HotelReportResults", reportResults);
+                await _context.Database.CloseConnectionAsync();
+                // Obtén el valor del parámetro de salida
+                var resultado = (int)resultadoParam.Value;
+                if (resultado != 1)
+                {
+                    ModelState.AddModelError("", "Error generating report.");
+                    return View();
+                }
             }
 
-            var hospedajes = await _context.Hospedajes
-                .Select(h => new { h.IdHospedaje, h.CodMascota })
-                .ToListAsync();
-
-            ViewBag.Hospedajes = new SelectList(hospedajes, "IdHospedaje", "IdHospedaje");
-
-            return View(model);
+            return View("HotelReportResults", reportResults);
         }
     }
 }
