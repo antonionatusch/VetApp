@@ -24,7 +24,7 @@ namespace VetApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateHotelReport(DateOnly fechaInicio, DateOnly fechaFin)
+        public async Task<IActionResult> GenerateHotelReport(DateOnly fechaInicio, DateOnly fechaFin, int idHospedaje)
         {
             var reportResults = new List<HotelConsumptionReportViewModel>();
 
@@ -34,8 +34,9 @@ namespace VetApp.Controllers
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@fechaInicio", fechaInicio.ToString("yyyy-MM-dd")));
                 command.Parameters.Add(new SqlParameter("@fechaFin", fechaFin.ToString("yyyy-MM-dd")));
+                command.Parameters.Add(new SqlParameter("@idHospedaje", idHospedaje));
 
-                var resultadoParam = new SqlParameter("@resultado", SqlDbType.Int)
+                var resultadoParam = new SqlParameter("@resultado", SqlDbType.Money)
                 {
                     Direction = ParameterDirection.Output
                 };
@@ -43,39 +44,29 @@ namespace VetApp.Controllers
 
                 await _context.Database.OpenConnectionAsync();
 
-                using (var result = await command.ExecuteReaderAsync())
+                // Ejecutar el stored procedure
+                await command.ExecuteNonQueryAsync();
+
+                // Leer el resultado del parámetro de salida
+                var resultado = (decimal)resultadoParam.Value;
+
+                // Obtener detalles del hospedaje
+                var hospedaje = await _context.Hospedajes
+                    .FirstOrDefaultAsync(h => h.IdHospedaje == idHospedaje && h.FechaIngreso >= DateOnly.FromDateTime(fechaInicio.ToDateTime(TimeOnly.MinValue)) && h.FechaSalida <= DateOnly.FromDateTime(fechaFin.ToDateTime(TimeOnly.MinValue)));
+
+                if (hospedaje != null)
                 {
-                    while (await result.ReadAsync())
+                    reportResults.Add(new HotelConsumptionReportViewModel
                     {
-                        reportResults.Add(new HotelConsumptionReportViewModel
-                        {
-                            CodMascota = result.IsDBNull(0) ? string.Empty : result.GetString(0),
-                            NombreMascota = result.IsDBNull(1) ? string.Empty : result.GetString(1),
-                            Cliente = result.IsDBNull(2) ? string.Empty : result.GetString(2),
-                            IdServicio = result.IsDBNull(3) ? string.Empty : result.GetString(3),
-                            NombreServicio = result.IsDBNull(4) ? string.Empty : result.GetString(4),
-                            Observaciones = result.IsDBNull(5) ? string.Empty : result.GetString(5),
-                            NochesHosp = result.IsDBNull(6) ? 0 : result.GetInt32(6),
-                            CantidadAlim = result.IsDBNull(7) ? 0 : result.GetInt32(7),
-                            CantidadMedic = result.IsDBNull(8) ? 0 : result.GetInt32(8),
-                            CantidadCom = result.IsDBNull(9) ? 0 : result.GetInt32(9),
-                            CantidadBanos = result.IsDBNull(10) ? 0 : result.GetInt32(10),
-                            Nit = result.IsDBNull(11) ? string.Empty : result.GetString(11),
-                            Fecha = result.IsDBNull(12) ? DateOnly.MinValue : DateOnly.FromDateTime(result.GetDateTime(12)),
-                            PrecioTotal = result.IsDBNull(13) ? 0 : result.GetDecimal(13),
-                            PrecioTotalGeneral = result.IsDBNull(14) ? (decimal?)null : result.GetDecimal(14)
-                        });
-                    }
+                        IdHospedaje = idHospedaje,
+                        CodMascota = hospedaje.CodMascota,
+                        FechaIngreso = hospedaje.FechaIngreso,
+                        FechaSalida = hospedaje.FechaSalida,
+                        PrecioTotalGeneral = resultado
+                    });
                 }
 
                 await _context.Database.CloseConnectionAsync();
-                // Obtén el valor del parámetro de salida
-                var resultado = (int)resultadoParam.Value;
-                if (resultado != 1)
-                {
-                    ModelState.AddModelError("", "Error generating report.");
-                    return View();
-                }
             }
 
             return View("HotelReportResults", reportResults);
