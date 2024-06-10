@@ -12,6 +12,7 @@
         public int CantidadAlim { get; set; }
         public int CantidadMedic { get; set; }
         public int CantidadCom { get; set; }
+        public int CantidadBanos { get; set; }
         public string Nit { get; set; }
         public DateOnly Fecha { get; set; }
         public decimal PrecioTotal { get; set; }

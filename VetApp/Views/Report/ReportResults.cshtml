@@ -1,10 +1,10 @@
-﻿@model IEnumerable<VetApp.Models.ConsumosVetReportViewModel>
+﻿@model IEnumerable<VetApp.Models.HotelConsumptionReportViewModel>
 
 @{
-    ViewData["Title"] = "Report Results";
+    ViewData["Title"] = "Hotel Report Results";
 }
 
-<h1>Report Results</h1>
+<h1>Hotel Report Results</h1>
 
 <table class="table">
     <thead>
@@ -15,10 +15,14 @@
             <th>Servicio</th>
             <th>Nombre Servicio</th>
             <th>Observaciones</th>
-            <th>Vacunas Aplicadas</th>
+            <th>Noches Hospedadas</th>
+            <th>Cantidad Alimentos</th>
+            <th>Cantidad Medicamentos</th>
+            <th>Cantidad Comodidades</th>
             <th>NIT</th>
             <th>Fecha</th>
             <th>Precio Total</th>
+            <th>Precio Total General</th>
         </tr>
     </thead>
     <tbody>
@@ -31,10 +35,14 @@
                 <td>@item.IdServicio</td>
                 <td>@item.NombreServicio</td>
                 <td>@item.Observaciones</td>
-                <td>@item.CantVacunas</td>
+                <td>@item.NochesHosp</td>
+                <td>@item.CantidadAlim</td>
+                <td>@item.CantidadMedic</td>
+                <td>@item.CantidadCom</td>
                 <td>@item.Nit</td>
                 <td>@item.Fecha.ToShortDateString()</td>
                 <td>@item.PrecioTotal</td>
+                <td>@item.PrecioTotalGeneral</td>
             </tr>
         }
     </tbody>
