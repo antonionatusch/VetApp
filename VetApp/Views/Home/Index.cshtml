@@ -1,8 +1,46 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Página Principal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center bg-custom">
+    <h1 class="display-4">Veterinaria</h1>
+    <p>Aprenda sobre <a href="https://learn.microsoft.com/aspnet/core" class="text-link">construcción de aplicaciones web con ASP.NET Core</a>.</p>
+    <img src="https://us.123rf.com/450wm/uvaconcept/uvaconcept1512/uvaconcept151200258/49309697-plantilla-de-logotipo-para-la-cl%C3%ADnica-veterinaria-con-el-gato-y-dog-vector.jpg?ver=6" alt="Pastor Alemán" class="img-fluid pastor-aleman">
 </div>
+
+<style>
+    .text-center {
+        margin: 40px auto;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 800px;
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .bg-custom {
+        background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+        color: white;
+    }
+
+    .display-4 {
+        margin-bottom: 20px;
+    }
+
+    .text-link {
+        color: #ffdd57;
+        font-weight: bold;
+    }
+
+        .text-link:hover {
+            color: #ffd700;
+        }
+
+    .pastor-aleman {
+        margin-top: 20px;
+        border-radius: 10px;
+        max-width: 100%;
+        height: auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

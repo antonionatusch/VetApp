@@ -3,6 +3,21 @@
   <Items>
     <LogicalFolder Name="Connections" Type="2" Sorted="true">
       <Items>
+        <ConnectionNode Name="192.168.132.144:sa">
+          <Created>2024-06-10T12:08:05.7448553-04:00</Created>
+          <Type>SQL</Type>
+          <Server>192.168.132.144</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <TrustServerCertificate>True</TrustServerCertificate>
+          <HostNameInServerCertificate />
+          <EncryptionOption>True</EncryptionOption>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
         <ConnectionNode Name="ANTONIO:sa">
           <Created>2024-06-06T12:30:59.0425245-04:00</Created>
           <Type>SQL</Type>
@@ -18,7 +33,7 @@
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
         </ConnectionNode>
-        <ConnectionNode Name="LAPTOP-GT569K6P:LAPTOP-GT569K6P\user">
+        <ConnectionNode Name="LAPTOP-GT569K6P:ANTONIO\Antonio">
           <Created>2024-06-06T13:19:43.6272208-04:00</Created>
           <Type>SQL</Type>
           <Server>LAPTOP-GT569K6P</Server>
@@ -37,21 +52,51 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
+        <FileNode Name="ConsultasAux.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>ConsultasAux.sql</FullPath>
+        </FileNode>
+        <FileNode Name="DeleteSPVet.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>DeleteSPVet.sql</FullPath>
+        </FileNode>
+        <FileNode Name="DeleteVetRec.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:192.168.132.144:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>192.168.132.144</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>DeleteVetRec.sql</FullPath>
+        </FileNode>
+        <FileNode Name="DeleteVetTables.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>DeleteVetTables.sql</FullPath>
+        </FileNode>
+        <FileNode Name="Inserciones-Vet.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:192.168.132.144:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>192.168.132.144</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>Inserciones-Vet.sql</FullPath>
+        </FileNode>
         <FileNode Name="SPHotel.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LAPTOP-GT569K6P:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>LAPTOP-GT569K6P</AssociatedConnSrvName>
-          <AssociatedConnUserName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
           <FullPath>SPHotel.sql</FullPath>
         </FileNode>
         <FileNode Name="SPVet.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:192.168.132.144:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>192.168.132.144</AssociatedConnSrvName>
           <AssociatedConnUserName>sa</AssociatedConnUserName>
           <FullPath>SPVet.sql</FullPath>
         </FileNode>
         <FileNode Name="Veterinaria.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:ANTONIO:False:sa</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>ANTONIO</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:192.168.132.144:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>192.168.132.144</AssociatedConnSrvName>
           <AssociatedConnUserName>sa</AssociatedConnUserName>
           <FullPath>Veterinaria.sql</FullPath>
         </FileNode>
