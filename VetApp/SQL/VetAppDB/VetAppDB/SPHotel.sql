@@ -206,7 +206,7 @@ END;
 
 CREATE PROCEDURE RegistrarBanoExtra
     @IdHospedaje INT,
-    @CantidadBaños INT
+    @CantidadBanos INT
 AS
 BEGIN
     BEGIN TRY
@@ -231,7 +231,7 @@ BEGIN
 
         -- Insertar el registro del baño extra en ConsumoHotel
         INSERT INTO ConsumoHotel (idHospedaje, idServicio, codMascota, NIT, observaciones, nochesHosp, cantidadBanos)
-        VALUES (@IdHospedaje, @IdServicio, @CodMascota, @Nit, @Observaciones, @NochesHosp, @CantidadBaños);
+        VALUES (@IdHospedaje, @IdServicio, @CodMascota, @Nit, @Observaciones, @NochesHosp, @CantidadBanos);
 
     END TRY
     BEGIN CATCH
@@ -310,13 +310,13 @@ EXEC RegistrarHospedaje
 
 
 -- Ejecutar el procedimiento almacenado con un rango de fechas
-EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-05-01', @fechaFin = '2024-05-30', @resultado = @resultado OUTPUT;
+EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-06-01', @fechaFin = '2024-06-30', @resultado = @resultado OUTPUT;
 
 -- Ver el valor del resultado
 SELECT @resultado;
 
 -- Insertar 2 baños extra para el hospedaje con IdHospedaje 33
-EXEC RegistrarBanoExtra @IdHospedaje = 39, @CantidadBaños = 2;
+EXEC RegistrarBanoExtra @IdHospedaje = 49, @CantidadBanos = 2;
 
 
 
