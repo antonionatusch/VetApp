@@ -109,5 +109,58 @@ namespace VetApp.Controllers
 
             return View(model);
         }
+
+        // GET: RegistrarBanoExtra/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var consumoHotel = await _context.ConsumoHotels
+                .FirstOrDefaultAsync(ch => ch.IdHospedaje == id && (ch.IdServicio == "BE001" || ch.IdServicio == "BE002" || ch.IdServicio == "BE003"));
+            if (consumoHotel == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new RegistrarBanoExtraViewModel
+            {
+                IdHospedaje = consumoHotel.IdHospedaje,
+                CantidadBanos = consumoHotel.CantidadBanos
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: RegistrarBanoExtra/Delete/
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC DeleteBano @idHospedaje = {0}",
+                    id
+                );
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                var consumoHotel = await _context.ConsumoHotels
+                    .FirstOrDefaultAsync(ch => ch.IdHospedaje == id && (ch.IdServicio == "BE001" || ch.IdServicio == "BE002" || ch.IdServicio == "BE003"));
+                var viewModel = new RegistrarBanoExtraViewModel
+                {
+                    IdHospedaje = consumoHotel.IdHospedaje,
+                    CantidadBanos = consumoHotel.CantidadBanos
+                };
+
+                return View(viewModel);
+            }
+        }
     }
 }

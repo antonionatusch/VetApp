@@ -229,3 +229,11 @@ BEGIN
     SET cantidadBanos = @cantidadBanos
     WHERE idHospedaje = @idHospedaje AND idServicio IN ('BE001', 'BE002', 'BE003');
 END
+
+CREATE PROCEDURE DeleteBano
+    @idHospedaje INT
+AS
+BEGIN
+    DELETE FROM ConsumoHotel
+    WHERE idHospedaje = @idHospedaje AND idServicio IN ('BE001', 'BE002', 'BE003');
+END
