@@ -185,6 +185,44 @@ BEGIN
 END;
 
 
+-- baños extra
+
+CREATE PROCEDURE RegistrarBanoExtra
+    @IdHospedaje INT,
+    @CantidadBaños INT
+AS
+BEGIN
+    BEGIN TRY
+        DECLARE @CodMascota NVARCHAR(20);
+        DECLARE @IdServicio NVARCHAR(20);
+        DECLARE @Nit NVARCHAR(20) = 'S/N'; -- Suponiendo un valor por defecto para NIT
+        DECLARE @Observaciones NVARCHAR(150) = 'Registro automático';
+        DECLARE @NochesHosp INT = 0; -- Para baños extra no se considera noches hospedadas
+
+        -- Obtener el CodMascota y el servicio asociado al hospedaje
+        SELECT @CodMascota = codMascota, @IdServicio = idServicio
+        FROM ConsumoHotel
+        WHERE idHospedaje = @IdHospedaje AND idServicio IN ('H001', 'H002', 'H003');
+
+        -- Determinar el IdServicio del baño extra basado en el servicio del hospedaje
+        SET @IdServicio = 
+        CASE 
+            WHEN @IdServicio = 'H001' THEN 'BE001' -- Baño Extra Pequeño
+            WHEN @IdServicio = 'H002' THEN 'BE002' -- Baño Extra Mediano
+            WHEN @IdServicio = 'H003' THEN 'BE003' -- Baño Extra Grande
+        END;
+
+        -- Insertar el registro del baño extra en ConsumoHotel
+        INSERT INTO ConsumoHotel (idHospedaje, idServicio, codMascota, NIT, observaciones, nochesHosp, cantidadBanos)
+        VALUES (@IdHospedaje, @IdServicio, @CodMascota, @Nit, @Observaciones, @NochesHosp, @CantidadBaños);
+
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR (@ErrorMessage, 16, 1);
+    END CATCH
+END;
 
 
 
@@ -249,14 +287,20 @@ EXEC RegistrarHospedaje
 	SELECT * FROM Comodidades
 	SELECT * FROM Medicamentos
 	SELECT * FROM Servicios
-
+	
 	DECLARE @resultado INT;
+
+	DELETE FROM ConsumoHotel WHERE idServicio = 'BE002'
 
 -- Ejecutar el procedimiento almacenado con un rango de fechas
 EXEC GenerateHotelConsumptionReport @fechaInicio = '2024-06-01', @fechaFin = '2024-06-30', @resultado = @resultado OUTPUT;
 
 -- Ver el valor del resultado
 SELECT @resultado;
+
+-- Insertar 2 baños extra para el hospedaje con IdHospedaje 33
+EXEC RegistrarBanoExtra @IdHospedaje = 37, @CantidadBaños = 2;
+
 
 
 

@@ -15,3 +15,4 @@ DROP PROCEDURE IF EXISTS BorrarConsulta;
 DROP PROCEDURE IF EXISTS InsertarConsumoVet;
 DROP PROCEDURE IF EXISTS RegistrarHospedaje;
 DROP PROCEDURE IF EXISTS GenerateHotelConsumptionReport;
+DROP PROCEDURE IF EXISTS RegistrarBanoExtra;

@@ -222,6 +222,7 @@ CREATE TABLE ConsumoHotel
 	cantidadAlim	int NOT NULL DEFAULT 0,
 	cantidadMedic	int NOT NULL DEFAULT 0,
 	cantidadCom		int NOT NULL DEFAULT 0,
+	cantidadBanos	int not null default 0,
 	CONSTRAINT PK_ConsumoHotel PRIMARY KEY (idHospedaje, idServicio, codMascota),
 	CONSTRAINT FK_HospedajeCH FOREIGN KEY (idHospedaje, codMascota) REFERENCES Hospedajes(idHospedaje, codMascota),
 	CONSTRAINT FK_ServiciosCH FOREIGN KEY (idServicio) REFERENCES Servicios,
