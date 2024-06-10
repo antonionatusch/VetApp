@@ -111,7 +111,6 @@ CREATE PROCEDURE GenerateHotelConsumptionReport
     @resultado INT OUTPUT
 AS
 BEGIN
-	
     BEGIN TRY
         -- Obtener datos de ConsumoHotel con cálculo de precio total
         SELECT 
@@ -153,14 +152,9 @@ BEGIN
                 + ISNULL((
                     SELECT sb.precio * ch.cantidadBanos
                     FROM Servicios sb
-                    INNER JOIN ConsumoHotel ch ON sb.idServicio = ch.idServicio
-					WHERE
-					ch.idServicio = 'BE001'
-					OR
-					ch.idServicio = 'BE002'
-					OR
-					ch.idServicio = 'BE003'
-
+                    WHERE (ch.idServicio = 'H001' AND sb.idServicio = 'BE001')
+                       OR (ch.idServicio = 'H002' AND sb.idServicio = 'BE002')
+                       OR (ch.idServicio = 'H003' AND sb.idServicio = 'BE003')
                 ), 0) -- Precio del baño extra
             ) AS precioTotal
         INTO #tempReport
@@ -197,6 +191,7 @@ BEGIN
         SET @resultado = -1; -- Error
     END CATCH
 END;
+
 
 
 

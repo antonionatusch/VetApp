@@ -214,6 +214,7 @@ public partial class VeterinariaExtendidaContext : DbContext
                 .HasColumnName("codMascota");
             entity.Property(e => e.CantidadAlim).HasColumnName("cantidadAlim");
             entity.Property(e => e.CantidadCom).HasColumnName("cantidadCom");
+            entity.Property(e => e.CantidadBanos).HasDefaultValue(0);
             entity.Property(e => e.CantidadMedic).HasColumnName("cantidadMedic");
             entity.Property(e => e.CodAlimento).HasColumnName("codAlimento");
             entity.Property(e => e.CodMedicamento).HasColumnName("codMedicamento");

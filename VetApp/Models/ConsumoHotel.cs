@@ -27,6 +27,7 @@ public partial class ConsumoHotel
     public int CantidadMedic { get; set; }
 
     public int CantidadCom { get; set; }
+    public int CantidadBanos { get; set; }
     [ValidateNever]
     public virtual Alimento? CodAlimentoNavigation { get; set; }
     [ValidateNever]
