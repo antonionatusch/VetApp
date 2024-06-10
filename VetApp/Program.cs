@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VeterinariaExtendidaContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("Conexion")));
 
-var cultureInfo = new CultureInfo("en-US"); // Cambia esto al código de cultura que prefieras
+var cultureInfo = new CultureInfo("en-US"); 
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 

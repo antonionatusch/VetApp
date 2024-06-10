@@ -1,0 +1,55 @@
+﻿@model IEnumerable<VetApp.ViewModels.RegistrarHospedajeViewModel>
+
+@{
+    ViewData["Title"] = "Hospedajes";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Registrar Nuevo Hospedaje</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CodMascota)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaIngreso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaSalida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TamanoMascota)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UsaNecesidadesEspeciales)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodMascota)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaIngreso)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaSalida)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TamanoMascota)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsaNecesidadesEspeciales)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

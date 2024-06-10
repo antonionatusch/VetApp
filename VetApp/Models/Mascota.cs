@@ -45,4 +45,6 @@ public partial class Mascota
     public virtual ICollection<ConsumosVet> ConsumosVets { get; set; } = new List<ConsumosVet>();
 
     public virtual ICollection<HistPeso> HistPesos { get; set; } = new List<HistPeso>();
+
+    public virtual ICollection<Hospedaje> Hospedajes { get; set; } = new List<Hospedaje>();
 }

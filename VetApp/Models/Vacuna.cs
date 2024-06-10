@@ -11,6 +11,7 @@ namespace VetApp.Models
         public string CodVacuna { get; set; } = null!;
 
         [Required]
+        [Display(Name ="Nombre de la vacuna")]
         [StringLength(80, ErrorMessage = "El campo Nombre no puede exceder los 80 caracteres.")]
         public string Nombre { get; set; } = null!;
 

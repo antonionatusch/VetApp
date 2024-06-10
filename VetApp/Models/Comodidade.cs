@@ -5,7 +5,7 @@ namespace VetApp.Models;
 
 public partial class Comodidade
 {
-    public string IdComodidad { get; set; } = null!;
+    public int IdComodidad { get; set; }
 
     public string Nombre { get; set; } = null!;
 

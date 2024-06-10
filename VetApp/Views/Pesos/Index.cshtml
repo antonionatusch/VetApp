@@ -1,0 +1,47 @@
+﻿@model IEnumerable<VetApp.Models.HistPeso>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaPesaje)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Peso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CodMascotaNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPesaje)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Peso) kgs
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CodMascotaNavigation.CodMascota)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje }) |
+                    @Html.ActionLink("Details", "Details", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje }) |
+                    @Html.ActionLink("Delete", "Delete", new { codMascota = item.CodMascota, fechaPesaje = item.FechaPesaje })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
