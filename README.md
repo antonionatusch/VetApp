@@ -80,3 +80,10 @@ Se requiere:
 
 ·        Todas las interfaces ABMC/CRUD que sean necesarias
 </div>
+
+
+## Demostración del reporte del consumo hotelero y baños
+https://prnt.sc/LhwZBpad5oJl
+
+## Demostración del reporte médico
+https://prnt.sc/m7QlwTF9IHUp
