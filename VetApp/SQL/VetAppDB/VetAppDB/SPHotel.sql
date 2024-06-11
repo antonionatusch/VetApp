@@ -107,79 +107,106 @@ BEGIN
 END;
 
 -- reporte consumo hotelero
-CREATE PROCEDURE GenerateHotelConsumptionReport
+CREATE PROCEDURE [dbo].[GenerateHotelConsumptionReport]
     @fechaInicio DATE,
     @fechaFin DATE,
-    @idHospedaje INT,
-    @resultado MONEY OUTPUT
+    @resultado INT OUTPUT
 AS
 BEGIN
-    SET NOCOUNT ON;
+    BEGIN TRY
+        -- Obtener datos de ConsumoHotel con cálculo de precio total
+        SELECT 
+            ch.codMascota,
+            m.nombre AS nombreMascota,
+            c.apellido AS cliente,
+            ch.idServicio,
+            s.nombre AS nombreServicio,
+            ch.observaciones,
+            ch.nochesHosp,
+            ch.cantidadAlim,
+            ch.cantidadMedic,
+            ch.cantidadCom,
+            ch.cantidadBanos,  -- Agregar cantidad de baños
+            ch.NIT,
+            h.fechaIngreso AS fecha,
+            (
+                CASE 
+                    WHEN ch.idServicio IN ('H001', 'H002', 'H003') THEN 
+                        ch.nochesHosp * s.precio -- Precio del servicio de hospedaje
+                    ELSE 
+                        0
+                END
+                + ISNULL((
+                    SELECT a.precioUnitario * ch.cantidadAlim
+                    FROM Alimentos a
+                    WHERE a.codAlimento = ch.codAlimento
+                ), 0) -- Precio del alimento consumido
+                + ISNULL((
+                    SELECT co.precioUnitario * ch.cantidadCom
+                    FROM Comodidades co
+                    WHERE co.idComodidad = ch.idComodidad
+                ), 0) -- Precio de la comodidad consumida
+                + ISNULL((
+                    SELECT me.precioUnitario * ch.cantidadMedic
+                    FROM Medicamentos me
+                    WHERE me.codMedicamento = ch.codMedicamento
+                ), 0) -- Precio del medicamento consumido
+                + ISNULL((
+                    CASE
+                        WHEN ch.idServicio IN ('BE001', 'BE002', 'BE003') THEN s.precio * ch.cantidadBanos
+                        ELSE 0
+                    END
+                ), 0) -- Precio de los baños consumidos
+            ) AS precioTotal
+        INTO #tempReport
+        FROM 
+            ConsumoHotel ch
+            JOIN Mascotas m ON ch.codMascota = m.codMascota
+            JOIN Clientes c ON m.codCliente = c.codCliente
+            JOIN Servicios s ON ch.idServicio = s.idServicio
+            JOIN Hospedajes h ON ch.idHospedaje = h.idHospedaje AND ch.codMascota = h.codMascota
+        WHERE 
+            h.fechaIngreso BETWEEN @fechaInicio AND @fechaFin;
+        
+        -- Calcular el precio total general por mascota
+        SELECT 
+            codMascota, 
+            SUM(precioTotal) AS precioTotalGeneral
+        INTO #totalPorMascota
+        FROM #tempReport
+        GROUP BY codMascota;
 
-    -- Variable para almacenar el consumo total
-    DECLARE @consumoTotal MONEY;
-    SET @consumoTotal = 0;
+        -- Seleccionar datos del reporte con el precio total general por mascota
+        SELECT 
+            tr.*,
+            CASE 
+                WHEN tr.idServicio IN ('H001', 'H002', 'H003') THEN tm.precioTotalGeneral
+                ELSE NULL
+            END AS precioTotalGeneral
+        FROM #tempReport tr
+        LEFT JOIN #totalPorMascota tm ON tr.codMascota = tm.codMascota;
 
-    -- Calcular el costo de las noches de hospedaje
-    SELECT @consumoTotal = ISNULL(@consumoTotal, 0) + ISNULL(SUM(s.precio * ch.nochesHosp), 0)
-    FROM ConsumoHotel ch
-    JOIN Servicios s ON ch.idServicio = s.idServicio
-    WHERE ch.idHospedaje = @idHospedaje
-    AND ch.idHospedaje IN (
-        SELECT idHospedaje 
-        FROM Hospedajes 
-        WHERE fechaIngreso >= @fechaInicio AND fechaSalida <= @fechaFin
-    );
-
-    -- Calcular el costo de los baños
-    SELECT @consumoTotal = ISNULL(@consumoTotal, 0) + ISNULL(SUM(s.precio * ch.cantidadBanos), 0)
-    FROM ConsumoHotel ch
-    JOIN Servicios s ON ch.idServicio = s.idServicio
-    WHERE ch.idHospedaje = @idHospedaje
-    AND ch.idHospedaje IN (
-        SELECT idHospedaje 
-        FROM Hospedajes 
-        WHERE fechaIngreso >= @fechaInicio AND fechaSalida <= @fechaFin
-    );
-
-    -- Calcular el costo de los alimentos extra
-    SELECT @consumoTotal = ISNULL(@consumoTotal, 0) + ISNULL(SUM(a.precioUnitario * ch.cantidadAlim), 0)
-    FROM ConsumoHotel ch
-    JOIN Alimentos a ON ch.codAlimento = a.codAlimento
-    WHERE ch.idHospedaje = @idHospedaje
-    AND ch.idHospedaje IN (
-        SELECT idHospedaje 
-        FROM Hospedajes 
-        WHERE fechaIngreso >= @fechaInicio AND fechaSalida <= @fechaFin
-    );
-
-    -- Calcular el costo de las comodidades extra
-    SELECT @consumoTotal = ISNULL(@consumoTotal, 0) + ISNULL(SUM(c.precioUnitario * ch.cantidadCom), 0)
-    FROM ConsumoHotel ch
-    JOIN Comodidades c ON ch.idComodidad = c.idComodidad
-    WHERE ch.idHospedaje = @idHospedaje
-    AND ch.idHospedaje IN (
-        SELECT idHospedaje 
-        FROM Hospedajes 
-        WHERE fechaIngreso >= @fechaInicio AND fechaSalida <= @fechaFin
-    );
-
-    -- Calcular el costo de los medicamentos extra
-    SELECT @consumoTotal = ISNULL(@consumoTotal, 0) + ISNULL(SUM(m.precioUnitario * ch.cantidadMedic), 0)
-    FROM ConsumoHotel ch
-    JOIN Medicamentos m ON ch.codMedicamento = m.codMedicamento
-    WHERE ch.idHospedaje = @idHospedaje
-    AND ch.idHospedaje IN (
-        SELECT idHospedaje 
-        FROM Hospedajes 
-        WHERE fechaIngreso >= @fechaInicio AND fechaSalida <= @fechaFin
-    );
-
-    -- Asignar el resultado al parámetro de salida
-    SET @resultado = @consumoTotal;
+        SET @resultado = 1; -- Éxito
+    END TRY
+    BEGIN CATCH
+        SET @resultado = -1; -- Error
+    END CATCH
 END;
 
+/*
+DECLARE @resultado INT;
 
+EXEC [dbo].[GenerateHotelConsumptionReport] 
+    @fechaInicio = '2024-06-01',
+    @fechaFin = '2024-06-30',
+    @resultado = @resultado OUTPUT;
+
+SELECT @resultado AS Resultado;
+
+-- Verificar los resultados
+SELECT * FROM #tempReport;
+SELECT * FROM #totalPorMascota;
+*/
 
 -- baños extra
 
