@@ -59,10 +59,11 @@ namespace VetApp.Controllers
                             CantidadAlim = result.GetInt32(7),
                             CantidadMedic = result.GetInt32(8),
                             CantidadCom = result.GetInt32(9),
-                            Nit = result.GetString(10),
-                            Fecha = DateOnly.FromDateTime(result.GetDateTime(11)),
-                            PrecioTotal = result.GetDecimal(12),
-                            PrecioTotalGeneral = result.IsDBNull(13) ? (decimal?)null : result.GetDecimal(13)
+                            CantidadBanos = result.GetInt32(10),  // Nueva propiedad para la cantidad de baños
+                            Nit = result.GetString(11),
+                            Fecha = DateOnly.FromDateTime(result.GetDateTime(12)),
+                            PrecioTotal = result.GetDecimal(13),
+                            PrecioTotalGeneral = result.IsDBNull(14) ? (decimal?)null : result.GetDecimal(14)
                         });
                     }
                 }
@@ -79,5 +80,6 @@ namespace VetApp.Controllers
 
             return View("HotelReportResults", reportResults);
         }
+            
+        }
     }
-}

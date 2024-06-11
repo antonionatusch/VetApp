@@ -11,26 +11,21 @@ namespace VetApp.Models
         [ValidateNever]
         public string CodMascota { get; set; }
         [ValidateNever]
-
         public string NombreMascota { get; set; }
         [ValidateNever]
-
         public string Cliente { get; set; }
         [ValidateNever]
-
         public string IdServicio { get; set; }
         [ValidateNever]
-
         public string NombreServicio { get; set; }
         [ValidateNever]
-
         public string Observaciones { get; set; }
         public int NochesHosp { get; set; }
         public int CantidadAlim { get; set; }
         public int CantidadMedic { get; set; }
         public int CantidadCom { get; set; }
+        public int CantidadBanos { get; set; }  // Nueva propiedad para la cantidad de baños
         [ValidateNever]
-
         public string Nit { get; set; }
         public DateOnly Fecha { get; set; }
         public decimal PrecioTotal { get; set; }
